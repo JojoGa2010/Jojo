@@ -1,0 +1,13 @@
+WORTKLAR STARTEN
+
+1. Doppelklicke Wortklar.xcodeproj.
+2. Wähle oben in Xcode „Wortklar“ und „My Mac“.
+3. Drücke ⌘R.
+4. Gib deinen Text ein, wähle einen Modus und drücke Enter.
+   Umschalt + Enter fügt eine neue Zeile ein.
+
+Die Schreibmodi benötigen Apple Intelligence auf einem unterstützten Gerät.
+Für Übersetzungen die Ausgangs- und Zielsprache wählen und gegebenenfalls den Sprachdownload bestätigen.
+
+Du brauchst Xcode 26 und macOS 26 oder iOS 26.
+GitHub-Upload weiterhin ausstehend.
