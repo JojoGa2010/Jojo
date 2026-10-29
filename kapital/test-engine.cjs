@@ -7,3 +7,8 @@ s=G.fresh();assert.equal(G.trade(s,'world',1),'');assert.equal(G.trade(s,'world'
 s=G.fresh();s.cash=30000;G.buy(s,'garage');G.sell(s,'garage');assert.equal(s.cash,27600);assert.equal(s.owned.garage,0);
 s=G.fresh();assert(G.loan(s,1000));s.job=0;assert.equal(G.loan(s,1000),'');for(let i=0;i<40;i++)G.tick(s,720,false,()=>.5);assert.equal(s.loans.length,0);assert(s.cash>=0);assert(G.valid(s));assert(!G.valid({...s,cash:NaN}));assert(!G.valid({...s,bank:'other'}));
 console.log('Passed: holding, career salary, financing, atomic rejection, trading fees, asset resale, loan amortization, save validation.');
+assert.equal(G.JOBS.length,55);assert.equal(new Set(G.JOBS.map(j=>j.name)).size,55);
+s=G.fresh();s.job=0;s.last=1000000;let offline=G.catchUp(s,1000000+86400000);assert.equal(offline.seconds,86400);assert(Math.abs(s.cash-(2500+1550*120))<.001);assert.equal(s.xp,0);assert.equal(s.held,0);const once=s.cash;G.catchUp(s,1000000+86400000);assert.equal(s.cash,once,'No duplicate offline income');G.catchUp(s,999999);assert.equal(s.cash,once,'Clock reversal gives no income');
+s=G.fresh();s.job=4;s.xp=10000;s.cash=100000;assert.equal(G.apply(s,5),'');assert.equal(G.salary(s),1600);let high=G.JOBS.findIndex(j=>j.name==='Pilot/in');assert.equal(G.apply(s,high),'');assert.equal(G.salary(s),7200);assert(G.valid(s));
+s=G.fresh();s.job=4;G.loan(s,1000);s.last=1000000;G.catchUp(s,1000000+40*720*1000);assert.equal(s.loans.length,0,'Offline repayments finish');assert(s.cash>0);assert(G.valid(s));
+console.log('Passed: 55 unique jobs, 24 hours offline without cap, no duplicate income, no offline hold rewards, career changes, offline loan payoff.');
