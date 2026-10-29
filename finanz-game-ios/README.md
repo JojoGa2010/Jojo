@@ -44,3 +44,6 @@ Eigenes dunkelblau-goldenes F-Monogramm mit Aufwärtspfeil. Mit dem integrierten
 
 ## Erweiterter Aktien- und Immobilienkatalog
 27 reale Unternehmen mit lokal gebündelten Logos, plus vier bisherige fiktive Anlagen. 25 Immobilien insgesamt, mit realen Ortsnamen und fiktiven Objekten. Alle Kurse, Preise und Mieten sind Spielparameter. Börse nach Unternehmen/Kürzel und Branche filtern; Immobilien nach Ort oder Objekt suchen. Bestehende Speicherstände erhalten fehlende neue Kurse automatisch, ohne Guthaben und vorhandene Anteile zu ändern. Logoquellen in LOGO-SOURCES.md.
+
+## Tipp-Modus
+Auf der Übersicht oder in Einstellungen zwischen Tippen und Gedrückthalten wählen. Standard ist Tippen: Jeder Klick/Tipp auf die Karte ergibt genau eine Spielgeldeinheit (bei Euro-Anzeige 1 €) und 0,1 XP. Gedrückthalten erzeugt im Tipp-Modus keine laufenden Karten-Einnahmen. Bei anderer Währung gilt weiter der 1:1-Spielwert. Gehalt und Besitzerträge laufen in beiden Modi unverändert weiter. Die Wahl wird auf dem Gerät gespeichert.
