@@ -17,7 +17,7 @@ enum GameTab: String, CaseIterable, Identifiable {
         case .earn: "Verdienen"
         case .career: "Karriere"
         case .assets: "Vermögen"
-        case .life: "Alltag"
+        case .life: "Essen"
         case .settings: "Einstellungen"
         }
     }
@@ -26,7 +26,7 @@ enum GameTab: String, CaseIterable, Identifiable {
         case .earn: "creditcard.fill"
         case .career: "briefcase.fill"
         case .assets: "chart.pie.fill"
-        case .life: "heart.text.square.fill"
+        case .life: "fork.knife"
         case .settings: "gearshape.fill"
         }
     }
