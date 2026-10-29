@@ -12,7 +12,7 @@ SwiftUI stellt die native iPhone-Menüleiste bereit; auf iOS 26+ mit aktuellem S
 
 Ein Spielmonat dauert **600 Sekunden**. Gehalt, Nettomieten, Besitzerträge, Firmengewinne, Unterhalt und Kreditraten werden **erst am Monatsende** verbucht. Ein Countdown zeigt die nächste Auszahlung. Neue Firmen und neu erworbener Besitz werden für die tatsächliche Besitzzeit anteilig gerechnet. Negative Erträge und unbezahlte Kosten können offene Rechnungen erzeugen; sie werden bei folgenden Monatsabschlüssen verrechnet. Kredite bleiben auch bei fehlender Zahlungsfähigkeit bestehen.
 
-Bei Rückkehr werden vergangene Monatsabschlüsse nachgerechnet. iOS braucht keinen dauerhaften Hintergrundprozess. Firmen und Vermietungen laufen offline weiter. Arbeitsaufgaben erledigst du aktiv: Ohne neue Aufgaben gibt es im folgenden Monat kein automatisches Jobgehalt. Der Tipp-Modus bleibt eine Ausnahme: Jeder Tipp bringt sofort eine Spielgeldeinheit und 0,1 XP. Alternativ kann Gedrückthalten ausgewählt werden.
+Bei Rückkehr werden vergangene Monatsabschlüsse nachgerechnet. iOS braucht keinen dauerhaften Hintergrundprozess. Firmen und Vermietungen laufen offline weiter. Nach der erfolgreichen Bewerbung gibt es genau eine Arbeitsaufgabe pro Spielmonat. Eine richtige Antwort schaltet das volle zeitanteilige Monatsgehalt frei. Eine falsche oder ausgelassene Antwort gibt kein Jobgehalt für diesen Monat; erst im nächsten Monat gibt es wieder eine Aufgabe. Der Tipp-Modus bleibt eine Ausnahme: Jeder Tipp bringt sofort eine Spielgeldeinheit und 0,1 XP. Alternativ kann Gedrückthalten ausgewählt werden.
 
 ## Bewerbung, Fragen und Unterschrift
 
@@ -24,7 +24,7 @@ Unter **Karriere** stehen 55 anklickbare Jobkarten mit Gehalt, Anforderungen, Su
 4. Jede richtige Antwort gibt 80 Punkte plus bis zu 20 Tempopunkte. Pro Sekunde nach Start sinkt der Bonus um einen Punkt bis auf null nach 20 Sekunden. Falsche Antworten ergeben null Punkte. Langsames richtiges Antworten ist somit immer besser als schnelles falsches. Die Gesamtbewertung ist der gerundete Durchschnitt der drei Fragen, maximal 100 Punkte.
 5. Der Chef prüft die Antworten 30 Sekunden. Für die Zusage sind **mindestens zwei richtige Antworten und 60/100 Gesamtpunkte** nötig. Ohne Zusage wird der gewünschte Job nicht freigeschaltet. Eine vorhandene andere Stelle bleibt bei Absage erhalten. Alle drei richtigen Antworten reichen auch ohne Tempobonus für eine Zusage.
 6. Unterschrift, Prüfung, Fragen und Entscheidung werden mit animierten Schritten dargestellt. Animationen respektieren die Bewegungs-Einstellungen des Spiels und Geräts. Die Unterschrift wird während der laufenden Bewerbung im lokalen Spielstand gespeichert; die Entscheidungshistorie enthält Ergebnis und Punkte ohne weitere Unterschriftkopien.
-7. In der aktiven Stelle pro Monat drei Arbeitsaufgaben richtig beantworten. Eine richtige Aufgabe ergibt ein Drittel des Gehalts, drei das volle Gehalt; die Beschäftigungszeit wird anteilig gerechnet. Zwei erfolgreiche Arbeitsmonate, Erfahrung und Weiterbildungskosten ermöglichen ein Gehalts-Upgrade. Es gibt fünf Upgrades mit je 15 % mehr Grundgehalt.
+7. In der aktiven Stelle gibt es pro Monat genau eine Arbeitsaufgabe. Eine richtige Antwort ergibt das volle zeitanteilige Gehalt. Die Bewerbung muss nur einmal erfolgreich abgeschlossen werden; bei einem Jobwechsel gibt es eine neue Bewerbung. Zwei erfolgreiche Arbeitsmonate, Erfahrung und Weiterbildungskosten ermöglichen ein Gehalts-Upgrade. Es gibt fünf Upgrades mit je 15 % mehr Grundgehalt.
 
 Frühere noch laufende Bewerbungen wechseln einmalig in den Unterschriftsentwurf. Bereits bezahlte Weiterbildungen werden nicht erneut berechnet. Bestehende Jobs und Vermögenswerte bleiben erhalten.
 
@@ -50,7 +50,7 @@ Vor dem Löschen der App den Spielstand exportieren. Darstellungs-Einstellungen 
 
 `FinanzGame/FinanzGameApp.swift`: SwiftUI, native Navigation und Dateiübergabe. `FinanzGame/Web/`: lokale Spielseiten und Mechanik. `FinanzGame/Assets.xcassets/`: App-Icon.
 
-Mit Node.js: `node test-catalog.cjs`, `node test-economy.cjs`, `node test-navigation.cjs` und `node test-application.cjs`. Sie prüfen Katalog, Logos, Speicherübernahme, Handel, Tipp-Modus, Monatsgrenzen, Bewerbungen, Probeaufgaben, Beförderung, Firmengründung, Ausbau und Online-/Offline-Abrechnung.
+Mit Node.js: `node test-catalog.cjs`, `node test-economy.cjs`, `node test-navigation.cjs` und `node test-application.cjs` und `node test-life.cjs`. Sie prüfen Katalog, Logos, Speicherübernahme, Handel, Tipp-Modus, Monatsgrenzen, Bewerbungen, Probeaufgaben, Beförderung, Firmengründung, Ausbau und Online-/Offline-Abrechnung.
 
 ## Bilder und Icon
 
@@ -60,3 +60,14 @@ Alle wirtschaftlichen Werte und Entscheidungen sind fiktive Spielregeln. Keine e
 
 ## Mittiger Verdienst-Bereich und Kontostand
 Die native Leiste enthält von links: Karriere, Börse, **Verdienen**, Besitz, Einstellungen. Die Tipp-Karte liegt im dritten und damit mittleren Eintrag. Die App startet im Verdienst-Bereich. Die Vermögensübersicht bleibt über den Button darunter erreichbar. Der verfügbare Kontostand steht in der nativen Kopfzeile über allen Spielseiten und wird bei Tipps, Käufen, Monatsabschlüssen und Währungswechseln aktualisiert.
+
+## Alltags-Shop, Hunger und Haushalt
+Über **Essen & Alltag** unter den Statusanzeigen oder **Besitz → Alltag** erreichbar. Enthält acht Lebensmittel, acht eigene fiktive Handy-Modelle und sechs Haushaltsgeräte. Lebensmittel kommen in deinen Vorrat und können gegessen werden. Nicht essbare Gegenstände werden dauerhaft gekauft; das zuletzt gekaufte Handy ist ausgewählt. Geräte zählen mit 70 % des Kaufpreises zum Nettovermögen.
+
+Sättigung und Lebensenergie beginnen bei 100 %. Sättigung verliert pro Zehn-Minuten-Monat 80 Punkte. Bei leerem Magen sinkt die Lebensenergie um 40 Punkte pro Monat. Bei null kannst du weder Jobaufgaben noch Tipp-/Halteverdienst ausführen, bis du isst. Es gibt keinen dauerhaften Tod oder Verlust des Vermögens. Zwei Mahlzeiten und ein Brot sind als einmaliger Startvorrat enthalten. Automatisches Essen aus vorhandenen Vorräten ist zunächst eingeschaltet und lässt sich im Shop ändern. Es kauft kein Essen selbstständig. Ein Kühlschrank verbessert die Sättigungswirkung um 10 %, wenn Strom aktiv und bezahlt ist.
+
+Strom kostet 45, Wasser 12 und Internet 25 Spielgeldeinheiten pro Monat. Der Stromverbrauch gekaufter Geräte kommt hinzu. Kosten werden zeitanteilig vorgemerkt und am Monatsende bezahlt; nicht bezahlte Rechnungen bleiben offen. Bei offenen Rechnungen pausiert der Kühlschrank-Bonus. Die Dienste lassen sich für künftige Kosten abschalten; alte Rechnungen bleiben bestehen. Im Shop können offene Rechnungen auch vorzeitig mit verfügbarem Guthaben bezahlt werden.
+
+Bei leerem Vorrat, weniger als 1,50 Spielgeldeinheiten und höchstens 15 % Sättigung gibt es einmal pro Monat eine kostenlose Notmahlzeit. Sie stellt mindestens 35 % Sättigung und 20 % Lebensenergie her, damit du erneut Tipp-Geld für Essen verdienen kannst.
+
+Alles läuft offline nach denselben Regeln weiter. Beim Umstieg erhalten ältere Spielstände die Alltagswerte und den Startvorrat einmalig. Bereits richtig erledigte Jobaufgaben gelten für den laufenden Monat als erledigt. Guthaben, Bewerbung, Aktien und bestehender Besitz bleiben erhalten.
