@@ -38,3 +38,6 @@ iOS 17 oder neuer. SwiftUI, WebKit und Apple-Systemframeworks, keine Drittanbiet
 Erstellt mit dem integrierten ImageGen-Werkzeug. Prompt: Fotorealistischer Bildatlas mit acht getrennten Motiven – Wiener Wohnhaus, modernes Café, mechanische Luxusuhr, silbernes Elektroauto, Segelyacht, Flughafen, tropisches Inselresort und Finanzskyline bei Abendlicht. Warme Beleuchtung, keine Benutzeroberfläche und keine Beschriftung. Datei: `FinanzGame/Web/assets/scenes.jpg`.
 
 Alle Werte und Bankkarten gehören ausschließlich zur fiktiven Simulation. Keine echten Bankkonten, Zahlungen oder Finanzprodukte.
+
+## App-Icon
+Eigenes dunkelblau-goldenes F-Monogramm mit Aufwärtspfeil. Mit dem integrierten ImageGen-Werkzeug erstellt; Prompt: minimalistisches vollflächiges iOS-Icon, kräftiges goldenes F mit steigendem Finanzpfeil auf nachtblauem Hintergrund, ohne zusätzliche Schrift oder Rahmen. Der Asset-Katalog enthält das 1024-Pixel-Original; Xcode erzeugt die benötigten App-Größen.
