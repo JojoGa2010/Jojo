@@ -14,16 +14,19 @@ Ein Spielmonat dauert **600 Sekunden**. Gehalt, Nettomieten, Besitzerträge, Fir
 
 Bei Rückkehr werden vergangene Monatsabschlüsse nachgerechnet. iOS braucht keinen dauerhaften Hintergrundprozess. Firmen und Vermietungen laufen offline weiter. Arbeitsaufgaben erledigst du aktiv: Ohne neue Aufgaben gibt es im folgenden Monat kein automatisches Jobgehalt. Der Tipp-Modus bleibt eine Ausnahme: Jeder Tipp bringt sofort eine Spielgeldeinheit und 0,1 XP. Alternativ kann Gedrückthalten ausgewählt werden.
 
-## Bewerbung, Arbeiten und Beförderung
+## Bewerbung, Fragen und Unterschrift
 
-Unter **Karriere** findest du 55 anklickbare Jobkarten mit Suche und Branchenfilter. In jeder Detailansicht siehst du Gehalt, Anforderungen und mögliche Upgrades.
+Unter **Karriere** stehen 55 anklickbare Jobkarten mit Gehalt, Anforderungen, Suche und Branchenfilter bereit.
 
-1. Bewerbung einreichen. Erfahrung und Weiterbildungskosten werden geprüft. Die Weiterbildung wird bei Bewerbung bezahlt, auch bei späterer Absage.
-2. 45 Sekunden auf die Unterlagenprüfung warten. Deine bisherige Stelle bleibt bestehen.
-3. In der zweiminütigen Probephase drei Arbeitssituationen beantworten. Jede Aufgabe braucht zehn Sekunden Lesezeit; zwischen Aufgaben liegen zehn Sekunden Freigabezeit.
-4. Der Chef überlegt weitere 30 Sekunden. Mindestens zwei gute Antworten ergeben eine Zusage. Sonst gibt es eine Absage; danach kannst du dich erneut bewerben. Keine Zusage ohne aktive Probearbeit.
-5. In der aktiven Stelle pro Spielmonat drei Aufgaben richtig erledigen. Eine richtige Aufgabe ergibt ein Drittel des Gehalts, drei Aufgaben das volle Gehalt. Falsche Antworten geben keinen Gehaltsanteil; weitere Versuche sind möglich. Neue Aufgaben gibt es im nächsten Monat. Bei Wechsel wird vorher erarbeitetes Gehalt vorgemerkt, und Beschäftigungszeit wird anteilig gerechnet.
-6. Zwei Monate mit jeweils drei richtigen Aufgaben, die nötige Erfahrung und die Weiterbildungskosten ermöglichen ein Gehalts-Upgrade. Es gibt fünf Upgrades; jede Stufe erhöht das Grundgehalt um 15 %.
+1. Bewerbung vorbereiten und mit Finger oder Maus im Unterschriftsfeld unterschreiben. Die Unterschrift gilt nur im fiktiven Spiel, ist kein Vertrag und wird nicht an einen echten Arbeitgeber übermittelt. Erst beim unterschriebenen Absenden wird die erforderliche Weiterbildung bezahlt. Ein noch nicht unterschriebener Entwurf kann verworfen werden.
+2. Die Unterlagenprüfung dauert 45 Sekunden. Danach folgen genau drei Bewerbungsfragen.
+3. Jede Frage kann ohne Zeitlimit gelesen werden. **Erst mit Start beginnt die Zeitmessung**, und die Antworten erscheinen sofort ohne Wartezeit. Das gilt ebenfalls für Arbeitsaufgaben. Während des Lesens und zwischen Fragen läuft kein Bewerbungs-Zeitlimit.
+4. Jede richtige Antwort gibt 80 Punkte plus bis zu 20 Tempopunkte. Pro Sekunde nach Start sinkt der Bonus um einen Punkt bis auf null nach 20 Sekunden. Falsche Antworten ergeben null Punkte. Langsames richtiges Antworten ist somit immer besser als schnelles falsches. Die Gesamtbewertung ist der gerundete Durchschnitt der drei Fragen, maximal 100 Punkte.
+5. Der Chef prüft die Antworten 30 Sekunden. Für die Zusage sind **mindestens zwei richtige Antworten und 60/100 Gesamtpunkte** nötig. Ohne Zusage wird der gewünschte Job nicht freigeschaltet. Eine vorhandene andere Stelle bleibt bei Absage erhalten. Alle drei richtigen Antworten reichen auch ohne Tempobonus für eine Zusage.
+6. Unterschrift, Prüfung, Fragen und Entscheidung werden mit animierten Schritten dargestellt. Animationen respektieren die Bewegungs-Einstellungen des Spiels und Geräts. Die Unterschrift wird während der laufenden Bewerbung im lokalen Spielstand gespeichert; die Entscheidungshistorie enthält Ergebnis und Punkte ohne weitere Unterschriftkopien.
+7. In der aktiven Stelle pro Monat drei Arbeitsaufgaben richtig beantworten. Eine richtige Aufgabe ergibt ein Drittel des Gehalts, drei das volle Gehalt; die Beschäftigungszeit wird anteilig gerechnet. Zwei erfolgreiche Arbeitsmonate, Erfahrung und Weiterbildungskosten ermöglichen ein Gehalts-Upgrade. Es gibt fünf Upgrades mit je 15 % mehr Grundgehalt.
+
+Frühere noch laufende Bewerbungen wechseln einmalig in den Unterschriftsentwurf. Bereits bezahlte Weiterbildungen werden nicht erneut berechnet. Bestehende Jobs und Vermögenswerte bleiben erhalten.
 
 ## Eigene Firma gründen
 
@@ -47,7 +50,7 @@ Vor dem Löschen der App den Spielstand exportieren. Darstellungs-Einstellungen 
 
 `FinanzGame/FinanzGameApp.swift`: SwiftUI, native Navigation und Dateiübergabe. `FinanzGame/Web/`: lokale Spielseiten und Mechanik. `FinanzGame/Assets.xcassets/`: App-Icon.
 
-Mit Node.js: `node test-catalog.cjs` und `node test-economy.cjs`. Sie prüfen Katalog, Logos, Speicherübernahme, Handel, Tipp-Modus, Monatsgrenzen, Bewerbungen, Probeaufgaben, Beförderung, Firmengründung, Ausbau und Online-/Offline-Abrechnung.
+Mit Node.js: `node test-catalog.cjs`, `node test-economy.cjs`, `node test-navigation.cjs` und `node test-application.cjs`. Sie prüfen Katalog, Logos, Speicherübernahme, Handel, Tipp-Modus, Monatsgrenzen, Bewerbungen, Probeaufgaben, Beförderung, Firmengründung, Ausbau und Online-/Offline-Abrechnung.
 
 ## Bilder und Icon
 
