@@ -88,3 +88,8 @@ Prüfung: `node test-feeding.cjs` kontrolliert unter anderem das Auffüllen bei 
 
 ## Fester Halteverdienst
 Gedrückthalten auf der Karte ergibt genau eine Spielgeldeinheit pro Sekunde, unabhängig von Job und Gehaltsstufe. Tippen ergibt unverändert eine Spielgeldeinheit pro Tipp. Bei Euro-Anzeige entspricht das jeweils 1 €. Angebrochene Sekunden werden zeitanteilig berechnet. Bestehende Erschöpfungsregeln gelten weiter.
+
+## Übersichtlicher Essen-und-Gesundheit-Bereich
+Sättigung, Lebensenergie, Vorräte und Gesundheit werden ausschließlich im unteren Menüeintrag **Essen** angezeigt. Sie erscheinen nicht mehr über der Karte, Karriere, Börse, Besitz oder Einstellungen. Der Kontostand bleibt wie bisher oben sichtbar.
+
+Im Bereich Essen gibt es vier Abschnitte: **Übersicht** mit zwei Statuskarten und Versorgungsdauer; **Essen** mit Vorrat und Einkauf; **Gesundheit** mit Spielarzt und Rezepten; **Haushalt** mit Handys, Geräten und Rechnungen. Es werden keine Haushaltsrechnungen mehr zwischen Lebensmitteln angezeigt. Die Spielmechanik und automatische Ernährung laufen unverändert weiter.
