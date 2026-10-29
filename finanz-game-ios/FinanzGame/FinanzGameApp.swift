@@ -10,11 +10,11 @@ struct FinanzGameApp: App {
 }
 
 enum GameTab: String, CaseIterable, Identifiable {
-    case overview, career, stocks, assets, settings
+    case career, stocks, earn, assets, settings
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .overview: "Übersicht"
+        case .earn: "Verdienen"
         case .career: "Karriere"
         case .stocks: "Börse"
         case .assets: "Besitz"
@@ -23,7 +23,7 @@ enum GameTab: String, CaseIterable, Identifiable {
     }
     var symbol: String {
         switch self {
-        case .overview: "rectangle.stack.fill"
+        case .earn: "creditcard.fill"
         case .career: "briefcase.fill"
         case .stocks: "chart.xyaxis.line"
         case .assets: "building.2.fill"
@@ -35,9 +35,10 @@ enum GameTab: String, CaseIterable, Identifiable {
 /// One persistent web view preserves one economy and one save across native tabs.
 @MainActor
 final class GameController: NSObject, ObservableObject, WKNavigationDelegate, WKScriptMessageHandler {
-    @Published var selection: GameTab = .overview
+    @Published var selection: GameTab = .earn
     @Published var ready = false
     @Published var appearance = "system"
+    @Published var balanceText = "…"
     @Published var exportURL: URL?
     @Published var showImporter = false
     @Published var errorMessage: String?
@@ -81,6 +82,8 @@ final class GameController: NSObject, ObservableObject, WKNavigationDelegate, WK
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard message.frameInfo.isMainFrame, let body = message.body as? [String: Any], let type = body["type"] as? String else { return }
         switch type {
+        case "balance":
+            if let value = body["value"] as? String, value.count <= 100 { balanceText = value }
         case "appearance":
             if let value = body["value"] as? String, ["system", "light", "dark"].contains(value) { appearance = value }
         case "navigate":
@@ -124,14 +127,26 @@ struct GameRootView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 9) {
-                Image(systemName: "chart.line.uptrend.xyaxis.circle.fill").foregroundStyle(.teal)
-                Text("Finanz Game").font(.headline)
-                Spacer()
-                Text("SIMULATION").font(.system(size: 9, weight: .semibold, design: .rounded))
-                    .padding(.horizontal, 9).padding(.vertical, 5)
-                    .background(.thinMaterial, in: Capsule())
-            }.padding(.horizontal, 20).padding(.vertical, 10)
+            VStack(alignment: .leading, spacing: 7) {
+                HStack {
+                    Label("Finanz Game", systemImage: "chart.line.uptrend.xyaxis.circle.fill")
+                        .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                    Spacer()
+                    Text("SIMULATION").font(.system(size: 9, weight: .semibold, design: .rounded))
+                        .padding(.horizontal, 9).padding(.vertical, 4)
+                        .background(.thinMaterial, in: Capsule())
+                }
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Kontostand").font(.caption).foregroundStyle(.secondary)
+                    Spacer(minLength: 12)
+                    Text(game.balanceText)
+                        .font(.system(size: 29, weight: .bold, design: .rounded))
+                        .monospacedDigit().lineLimit(1).minimumScaleFactor(0.55)
+                        .accessibilityLabel("Kontostand " + game.balanceText)
+                }
+            }.padding(.horizontal, 20).padding(.vertical, 12)
+                .background(.regularMaterial)
+
 
             ZStack(alignment: .bottom) {
                 GameWebView(webView: game.webView)

@@ -1,0 +1,19 @@
+const assert=require('node:assert/strict');
+const vm=require('node:vm');
+const fs=require('node:fs');
+const path=require('node:path');
+const nodes=new Map(),messages=[];
+function node(k){if(!nodes.has(k))nodes.set(k,{innerHTML:'',textContent:'',style:{},listeners:{},classList:{add(){},remove(){}},addEventListener(t,f){(this.listeners[t]??=[]).push(f)},appendChild(){},showModal(){},close(){}});return nodes.get(k);}
+const s={console,Intl,Date,Math,JSON,Number,String,Object,Array,Set,performance:{now:()=>0},localStorage:{getItem:()=>null,setItem(){}},matchMedia:()=>({matches:false,addEventListener(){}}),setInterval(){},setTimeout(){},clearTimeout(){},addEventListener(){},scrollTo(){},webkit:{messageHandlers:{finanz:{postMessage(m){messages.push(m)}}}},document:{documentElement:{dataset:{},classList:{add(){}}},createElement:()=>({setAttribute(){},remove(){}}),querySelector:node,querySelectorAll:()=>[],addEventListener(){}}};s.window=s;vm.createContext(s);
+for(const f of ['engine.js','ui.js','career.js','app.js','native.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'FinanzGame/Web',f),'utf8'),s);
+assert.equal(vm.runInContext('page',s),'earn');
+assert.equal(vm.runInContext('NAV[2][0]',s),'earn');
+assert.equal((node('#view').innerHTML.match(/id="earn"/g)||[]).length,1);
+assert(node('#view').innerHTML.includes('Vermögensübersicht'));
+const balance=()=>messages.filter(m=>m.type==='balance').at(-1).value;
+assert.equal(balance(),vm.runInContext('money(2500)',s));
+node('#earn').listeners.click.at(-1)();assert.equal(balance(),vm.runInContext('money(2501)',s));
+for(const page of ['career','stocks','assets','settings','overview','earn']){vm.runInContext(`page='${page}';render();`,s);assert.equal(balance(),vm.runInContext('money(state.cash)',s));}
+vm.runInContext("state.cash-=100;render();",s);assert.equal(balance(),vm.runInContext('money(2401)',s));
+vm.runInContext("preferences.currency='USD';applyPreferences();render();",s);assert(balance().includes('$'));assert.equal(node('#persistentBalance').textContent,balance());
+console.log('PASS: center earn tab, card start screen, overview access, native pinned balance after taps/purchases and on every page, currency display.');

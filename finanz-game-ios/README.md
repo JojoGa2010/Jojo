@@ -54,3 +54,6 @@ Mit Node.js: `node test-catalog.cjs` und `node test-economy.cjs`. Sie prüfen Ka
 Mit dem integrierten ImageGen-Werkzeug erstellt. Bildatlas-Prompt: Fotorealistische acht Motive – Wiener Wohnhaus, Café, mechanische Uhr, Elektroauto, Segelyacht, Flughafen, Inselresort, Finanzskyline bei Abendlicht. Icon-Prompt: Goldenes F mit steigendem Finanzpfeil auf nachtblauem Hintergrund, minimalistisch und ohne zusätzliche Schrift. Die Bilder sind dekorative Spielmotive; keine konkreten Kaufangebote. Originale liegen lokal im Projekt.
 
 Alle wirtschaftlichen Werte und Entscheidungen sind fiktive Spielregeln. Keine echten Konten, Zahlungen, Anstellungsverhältnisse oder Finanzprodukte.
+
+## Mittiger Verdienst-Bereich und Kontostand
+Die native Leiste enthält von links: Karriere, Börse, **Verdienen**, Besitz, Einstellungen. Die Tipp-Karte liegt im dritten und damit mittleren Eintrag. Die App startet im Verdienst-Bereich. Die Vermögensübersicht bleibt über den Button darunter erreichbar. Der verfügbare Kontostand steht in der nativen Kopfzeile über allen Spielseiten und wird bei Tipps, Käufen, Monatsabschlüssen und Währungswechseln aktualisiert.
