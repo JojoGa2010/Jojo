@@ -85,3 +85,6 @@ Sättigung wird aus vorhandenen Lebensmitteln sofort aufgefüllt und anschließe
 Im Essen-Bereich werden ungeöffnete Portionen, eine angebrochene Portion mit Restanteil und die geschätzte Versorgungsdauer laufend aktualisiert. Die Dauer umfasst Vorrat plus aktuelle Sättigung und wird in echten Minuten angezeigt. Der Kühlschrank-Bonus gilt beim Öffnen einer Portion. Es werden keine zusätzlichen Lebensmittel automatisch gekauft. Vorhandene Vorräte und Guthaben bleiben beim Update unverändert.
 
 Prüfung: `node test-feeding.cjs` kontrolliert unter anderem das Auffüllen bei 0, 14, 15, 20, 35, 60, 90, 99 und 100 %, Restportionen, Nährmengen-Erhaltung, Online-/Offline-Gleichheit, Kühlschrankeffekt und Speicherübernahme.
+
+## Fester Halteverdienst
+Gedrückthalten auf der Karte ergibt genau eine Spielgeldeinheit pro Sekunde, unabhängig von Job und Gehaltsstufe. Tippen ergibt unverändert eine Spielgeldeinheit pro Tipp. Bei Euro-Anzeige entspricht das jeweils 1 €. Angebrochene Sekunden werden zeitanteilig berechnet. Bestehende Erschöpfungsregeln gelten weiter.
