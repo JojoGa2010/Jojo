@@ -17,7 +17,7 @@ Automatisch im Browser auf diesem Gerät. Browserdaten löschen löscht auch den
 
 ## Wirtschaft und Zeit
 
-Ein Spielmonat dauert zwölf echte Minuten. Alle Gehälter, Mieten, laufenden Kosten und Raten verwenden diese Zeitbasis. Offline-Fortschritt ist auf einen Spielmonat begrenzt. Weiterbildung kostet einmalig und erfordert Erfahrung; Bewerbungen werden beim Erfüllen der Bedingungen angenommen.
+Ein Spielmonat dauert zwölf echte Minuten. Alle Gehälter, Mieten, laufenden Kosten und Raten verwenden diese Zeitbasis. Hintergrund-Fortschritt wird ohne Zeitlimit anhand der vergangenen Zeit beim Wiederöffnen oder Zurückwechseln nachberechnet. Dabei laufen Gehalt, Erträge, Kosten und Kredite weiter; kein Serverprozess nötig. Börsenkurse bleiben während der Abwesenheit unverändert. Weiterbildung kostet einmalig und erfordert Erfahrung; Bewerbungen werden beim Erfüllen der Bedingungen angenommen.
 
 Startkapital 2.500 €. Aushilfe: 1.550 € monatlich. Besitzpreise von 6.500 € bis 85 Mio. €. Ausgewiesene Betriebserträge sind nach Kosten. Privatfahrzeuge und Naturinsel verursachen Unterhalt. Kurse sind zufällig simuliert und ändern sich alle 30 Sekunden; Aktien werden mit 0,5 % Gebühr gehandelt. Keine echte Marktpreisanbindung. Alle Werte sind Spielparameter, keine Finanzberatung oder Bankkonditionen.
 
@@ -30,3 +30,6 @@ Statische HTML/CSS/JavaScript-App ohne Installation oder Build. `dist/index.html
 Prüfung: `node test-engine.cjs`. Start eines lokalen Webservers: `python3 -m http.server 8088 --directory dist`.
 
 Umfang: alle beschriebenen Grundaktionen spielbar; keine Mehrspielerfunktion, reale Bankanbindung oder individuell modellierten Unternehmensprozesse. Moderne Browser vorausgesetzt.
+
+## Erweiterung: Karriere und Hintergrund
+55 unterschiedliche Berufe mit eigenen Gehältern, Weiterbildungskosten und Erfahrungsvoraussetzungen. Nach Branche filtern oder Beruf suchen. Es ist jeweils genau ein Job aktiv; ein Berufswechsel ist möglich. Bestehende Spielstände bleiben kompatibel. Die Geräteuhr ist die Zeitquelle; Manipulation der Uhr wird im lokalen Prototyp nicht verhindert. Gedrückthalten und Erfahrung werden ausschließlich während aktiver Bedienung verdient.
