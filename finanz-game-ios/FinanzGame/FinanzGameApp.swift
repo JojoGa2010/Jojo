@@ -10,14 +10,14 @@ struct FinanzGameApp: App {
 }
 
 enum GameTab: String, CaseIterable, Identifiable {
-    case career, stocks, earn, assets, settings
+    case career, assets, earn, life, settings
     var id: String { rawValue }
     var title: String {
         switch self {
         case .earn: "Verdienen"
         case .career: "Karriere"
-        case .stocks: "Börse"
-        case .assets: "Besitz"
+        case .assets: "Vermögen"
+        case .life: "Alltag"
         case .settings: "Einstellungen"
         }
     }
@@ -25,8 +25,8 @@ enum GameTab: String, CaseIterable, Identifiable {
         switch self {
         case .earn: "creditcard.fill"
         case .career: "briefcase.fill"
-        case .stocks: "chart.xyaxis.line"
-        case .assets: "building.2.fill"
+        case .assets: "chart.pie.fill"
+        case .life: "heart.text.square.fill"
         case .settings: "gearshape.fill"
         }
     }
@@ -42,6 +42,7 @@ final class GameController: NSObject, ObservableObject, WKNavigationDelegate, WK
     @Published var exportURL: URL?
     @Published var showImporter = false
     @Published var errorMessage: String?
+    private var requestedPage: String?
     let webView: WKWebView
 
     override init() {
@@ -66,7 +67,9 @@ final class GameController: NSObject, ObservableObject, WKNavigationDelegate, WK
 
     func navigate(_ tab: GameTab) {
         guard ready else { return }
-        webView.evaluateJavaScript("page='\(tab.rawValue)';render();window.scrollTo(0,0);")
+        let destination = requestedPage ?? tab.rawValue
+        requestedPage = nil
+        webView.evaluateJavaScript("page='\(destination)';render();window.scrollTo(0,0);")
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -87,7 +90,12 @@ final class GameController: NSObject, ObservableObject, WKNavigationDelegate, WK
         case "appearance":
             if let value = body["value"] as? String, ["system", "light", "dark"].contains(value) { appearance = value }
         case "navigate":
-            if let value = body["value"] as? String, let tab = GameTab(rawValue: value) { selection = tab }
+            if let value = body["value"] as? String,
+               let tab = GameTab(rawValue: value) ?? (value == "stocks" ? .assets : value == "overview" ? .earn : nil),
+               selection != tab {
+                requestedPage = value
+                selection = tab
+            }
         case "export":
             guard let value = body["value"] as? String, value.utf8.count <= 100_000 else { return }
             do {
