@@ -33,3 +33,8 @@ Umfang: alle beschriebenen Grundaktionen spielbar; keine Mehrspielerfunktion, re
 
 ## Erweiterung: Karriere und Hintergrund
 55 unterschiedliche Berufe mit eigenen Gehältern, Weiterbildungskosten und Erfahrungsvoraussetzungen. Nach Branche filtern oder Beruf suchen. Es ist jeweils genau ein Job aktiv; ein Berufswechsel ist möglich. Bestehende Spielstände bleiben kompatibel. Die Geräteuhr ist die Zeitquelle; Manipulation der Uhr wird im lokalen Prototyp nicht verhindert. Gedrückthalten und Erfahrung werden ausschließlich während aktiver Bedienung verdient.
+
+## Glas-Menü und Einstellungen
+Die schwebende untere Menüleiste enthält Übersicht, Karriere, Börse, Besitz, Finanzen und Einstellungen. Eigene SVG-Symbole sind auf allen Geräten scharf. Liquid Glass nutzt transparente Flächen, Lichtreflexe und Hintergrundunschärfe; ohne Browserunterstützung bleibt eine deckende Leiste bedienbar.
+
+Unter Einstellungen: Hell/Dunkel/System, Glas-Effekt, Animationen, Währungssymbol EUR/USD/CHF/GBP und Cent-Anzeige. Währung ist reine Darstellung mit 1:1-Spielwerten, kein Wechselkurs. Voreinstellungen werden separat vom Spielstand auf diesem Gerät gespeichert. Systemseitig reduzierte Bewegung wird immer respektiert. Export/Import und neues Spiel sind ebenfalls dort verfügbar.
