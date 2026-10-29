@@ -41,3 +41,6 @@ Alle Werte und Bankkarten gehören ausschließlich zur fiktiven Simulation. Kein
 
 ## App-Icon
 Eigenes dunkelblau-goldenes F-Monogramm mit Aufwärtspfeil. Mit dem integrierten ImageGen-Werkzeug erstellt; Prompt: minimalistisches vollflächiges iOS-Icon, kräftiges goldenes F mit steigendem Finanzpfeil auf nachtblauem Hintergrund, ohne zusätzliche Schrift oder Rahmen. Der Asset-Katalog enthält das 1024-Pixel-Original; Xcode erzeugt die benötigten App-Größen.
+
+## Erweiterter Aktien- und Immobilienkatalog
+27 reale Unternehmen mit lokal gebündelten Logos, plus vier bisherige fiktive Anlagen. 25 Immobilien insgesamt, mit realen Ortsnamen und fiktiven Objekten. Alle Kurse, Preise und Mieten sind Spielparameter. Börse nach Unternehmen/Kürzel und Branche filtern; Immobilien nach Ort oder Objekt suchen. Bestehende Speicherstände erhalten fehlende neue Kurse automatisch, ohne Guthaben und vorhandene Anteile zu ändern. Logoquellen in LOGO-SOURCES.md.
