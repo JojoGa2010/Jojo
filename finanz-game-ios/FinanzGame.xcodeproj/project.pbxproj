@@ -7,16 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A00000000000000000000032 /* NativeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000031; };
+		A00000000000000000000034 /* NativeComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000033; };
+		A00000000000000000000036 /* CareerViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000035; };
+		A00000000000000000000038 /* WealthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000037; };
+		A00000000000000000000040 /* LifeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000039; };
+		A00000000000000000000042 /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000041; };
 		A00000000000000000000009 /* FinanzGame/FinanzGameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000006 /* FinanzGame/FinanzGameApp.swift */; };
 		A00000000000000000000010 /* FinanzGame/Web in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000007 /* FinanzGame/Web */; };
 		A00000000000000000000020 /* FinanzGame/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000019 /* FinanzGame/Assets.xcassets */; };
+B00000000000000000000001 = {isa = PBXBuildFile; fileRef = B00000000000000000000002; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A00000000000000000000031 /* NativeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanzGame/NativeCore.swift; sourceTree = "<group>"; };
+		A00000000000000000000033 /* NativeComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanzGame/NativeComponents.swift; sourceTree = "<group>"; };
+		A00000000000000000000035 /* CareerViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanzGame/CareerViews.swift; sourceTree = "<group>"; };
+		A00000000000000000000037 /* WealthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanzGame/WealthViews.swift; sourceTree = "<group>"; };
+		A00000000000000000000039 /* LifeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanzGame/LifeViews.swift; sourceTree = "<group>"; };
+		A00000000000000000000041 /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanzGame/SettingsViews.swift; sourceTree = "<group>"; };
 		A00000000000000000000006 /* FinanzGame/FinanzGameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanzGame/FinanzGameApp.swift; sourceTree = "<group>"; };
 		A00000000000000000000007 /* FinanzGame/Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FinanzGame/Web; sourceTree = "<group>"; };
 		A00000000000000000000008 /* Finanz Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = "Finanz Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000019 /* FinanzGame/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = FinanzGame/Assets.xcassets; sourceTree = "<group>"; };
+B00000000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanzGameUITests/FinanzGameUITests.swift; sourceTree = "<group>"; };
+B00000000000000000000003 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FinanzGameUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,13 +42,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+B00000000000000000000007 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		A00000000000000000000003 = {
 			isa = PBXGroup;
 			children = (
+				B00000000000000000000002,
 				A00000000000000000000006 /* FinanzGame/FinanzGameApp.swift */,
+				A00000000000000000000031 /* NativeCore.swift */,
+				A00000000000000000000033 /* NativeComponents.swift */,
+				A00000000000000000000035 /* CareerViews.swift */,
+				A00000000000000000000037 /* WealthViews.swift */,
+				A00000000000000000000039 /* LifeViews.swift */,
+				A00000000000000000000041 /* SettingsViews.swift */,
 				A00000000000000000000007 /* FinanzGame/Web */,
 				A00000000000000000000019 /* FinanzGame/Assets.xcassets */,
 				A00000000000000000000004 /* Products */,
@@ -43,6 +66,7 @@
 		A00000000000000000000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				B00000000000000000000003,
 				A00000000000000000000008 /* Finanz Game.app */,
 			);
 			name = Products;
@@ -68,8 +92,15 @@
 			productReference = A00000000000000000000008 /* Finanz Game.app */;
 			productType = "com.apple.product-type.application";
 		};
+B00000000000000000000004 = {isa = PBXNativeTarget; buildConfigurationList = B00000000000000000000005; buildPhases = (B00000000000000000000006, B00000000000000000000007, B00000000000000000000008); buildRules = (); dependencies = (B00000000000000000000009); name = FinanzGameUITests; productName = FinanzGameUITests; productReference = B00000000000000000000003; productType = "com.apple.product-type.bundle.ui-testing"; };
 /* End PBXNativeTarget section */
 
+/* Begin PBXContainerItemProxy section */
+B00000000000000000000010 = {isa = PBXContainerItemProxy; containerPortal = A00000000000000000000001; proxyType = 1; remoteGlobalIDString = A00000000000000000000005; remoteInfo = FinanzGame; };
+/* End PBXContainerItemProxy section */
+/* Begin PBXTargetDependency section */
+B00000000000000000000009 = {isa = PBXTargetDependency; target = A00000000000000000000005; targetProxy = B00000000000000000000010; };
+/* End PBXTargetDependency section */
 /* Begin PBXProject section */
 		A00000000000000000000001 /* Project object */ = {
 			isa = PBXProject;
@@ -92,6 +123,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				B00000000000000000000004,
 				A00000000000000000000005 /* FinanzGame */,
 			);
 		};
@@ -107,6 +139,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+B00000000000000000000008 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -115,9 +148,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				A00000000000000000000009 /* FinanzGame/FinanzGameApp.swift in Sources */,
+				A00000000000000000000032 /* NativeCore.swift in Sources */,
+				A00000000000000000000034 /* NativeComponents.swift in Sources */,
+				A00000000000000000000036 /* CareerViews.swift in Sources */,
+				A00000000000000000000038 /* WealthViews.swift in Sources */,
+				A00000000000000000000040 /* LifeViews.swift in Sources */,
+				A00000000000000000000042 /* SettingsViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+B00000000000000000000006 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00000000000000000000001); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -282,6 +322,8 @@
 			};
 			name = Release;
 		};
+B00000000000000000000011 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.jojoga.finanzgame.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; TEST_TARGET_NAME = FinanzGame; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+B00000000000000000000012 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.jojoga.finanzgame.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; TEST_TARGET_NAME = FinanzGame; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -303,6 +345,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+B00000000000000000000005 = {isa = XCConfigurationList; buildConfigurations = (B00000000000000000000011, B00000000000000000000012); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 /* End XCConfigurationList section */
 	};
 	rootObject = A00000000000000000000001 /* Project object */;

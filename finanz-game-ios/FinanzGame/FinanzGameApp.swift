@@ -1,200 +1,111 @@
 import SwiftUI
-import WebKit
-import UniformTypeIdentifiers
 
 @main
 struct FinanzGameApp: App {
-    var body: some Scene {
-        WindowGroup { GameRootView() }
-    }
+    @StateObject private var store = NativeGameStore()
+    var body: some Scene { WindowGroup { NativeGameRoot().environmentObject(store).preferredColorScheme(store.appearance) } }
 }
 
-enum GameTab: String, CaseIterable, Identifiable {
-    case career, assets, earn, life, settings
-    var id: String { rawValue }
-    var title: String {
-        switch self {
-        case .earn: "Verdienen"
-        case .career: "Karriere"
-        case .assets: "Vermögen"
-        case .life: "Essen"
-        case .settings: "Einstellungen"
-        }
-    }
-    var symbol: String {
-        switch self {
-        case .earn: "creditcard.fill"
-        case .career: "briefcase.fill"
-        case .assets: "chart.pie.fill"
-        case .life: "fork.knife"
-        case .settings: "gearshape.fill"
-        }
-    }
-}
-
-/// One persistent web view preserves one economy and one save across native tabs.
-@MainActor
-final class GameController: NSObject, ObservableObject, WKNavigationDelegate, WKScriptMessageHandler {
-    @Published var selection: GameTab = .earn
-    @Published var ready = false
-    @Published var appearance = "system"
-    @Published var balanceText = "…"
-    @Published var exportURL: URL?
-    @Published var showImporter = false
-    @Published var errorMessage: String?
-    private var requestedPage: String?
-    let webView: WKWebView
-
-    override init() {
-        let configuration = WKWebViewConfiguration()
-        configuration.websiteDataStore = .default()
-        let controller = WKUserContentController()
-        controller.addUserScript(WKUserScript(source: "document.documentElement.classList.add('native-app');", injectionTime: .atDocumentStart, forMainFrameOnly: true))
-        configuration.userContentController = controller
-        webView = WKWebView(frame: .zero, configuration: configuration)
-        super.init()
-        controller.add(self, name: "finanz")
-        webView.navigationDelegate = self
-        webView.isOpaque = false
-        webView.backgroundColor = .clear
-        webView.scrollView.backgroundColor = .clear
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        if let folder = Bundle.main.url(forResource: "Web", withExtension: nil),
-           FileManager.default.fileExists(atPath: folder.appendingPathComponent("index.html").path) {
-            webView.loadFileURL(folder.appendingPathComponent("index.html"), allowingReadAccessTo: folder)
-        } else { errorMessage = "Die Spieldateien fehlen im App-Paket." }
-    }
-
-    func navigate(_ tab: GameTab) {
-        guard ready else { return }
-        let destination = requestedPage ?? tab.rawValue
-        requestedPage = nil
-        webView.evaluateJavaScript("page='\(destination)';render();window.scrollTo(0,0);")
-    }
-
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        ready = true
-        navigate(selection)
-        webView.evaluateJavaScript("window.webkit.messageHandlers.finanz.postMessage({type:'appearance',value:preferences.theme});")
-    }
-
-    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        errorMessage = error.localizedDescription
-    }
-
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard message.frameInfo.isMainFrame, let body = message.body as? [String: Any], let type = body["type"] as? String else { return }
-        switch type {
-        case "balance":
-            if let value = body["value"] as? String, value.count <= 100 { balanceText = value }
-        case "appearance":
-            if let value = body["value"] as? String, ["system", "light", "dark"].contains(value) { appearance = value }
-        case "navigate":
-            if let value = body["value"] as? String,
-               let tab = GameTab(rawValue: value) ?? (value == "stocks" ? .assets : value == "overview" ? .earn : nil),
-               selection != tab {
-                requestedPage = value
-                selection = tab
-            }
-        case "export":
-            guard let value = body["value"] as? String, value.utf8.count <= 100_000 else { return }
-            do {
-                let url = FileManager.default.temporaryDirectory.appendingPathComponent("Finanz-Game-Spielstand.json")
-                try value.write(to: url, atomically: true, encoding: .utf8)
-                exportURL = url
-            } catch { errorMessage = "Der Spielstand konnte nicht exportiert werden." }
-        case "import": showImporter = true
-        default: break
-        }
-    }
-
-    func importSave(_ result: Result<URL, Error>) {
-        do {
-            let url = try result.get()
-            let granted = url.startAccessingSecurityScopedResource()
-            defer { if granted { url.stopAccessingSecurityScopedResource() } }
-            let data = try Data(contentsOf: url)
-            guard data.count <= 100_000 else { throw CocoaError(.fileReadTooLarge) }
-            let object = try JSONSerialization.jsonObject(with: data)
-            let canonical = try JSONSerialization.data(withJSONObject: object)
-            let json = String(decoding: canonical, as: UTF8.self)
-            // JSON is passed as an argument rather than interpolated as executable code.
-            webView.callAsyncJavaScript("return window.importNativeSave(payload);", arguments: ["payload": json], in: nil, in: .page) { [weak self] result in
-                if case .failure = result { self?.errorMessage = "Die Datei ist kein gültiger Finanz-Game-Spielstand." }
-            }
-        } catch { errorMessage = "Die Spielstand-Datei konnte nicht geladen werden." }
-    }
-
-    func background() { webView.evaluateJavaScript("holding=false;G.catchUp(state);save();") }
-    func foreground() { webView.evaluateJavaScript("G.catchUp(state);save();update();") }
-}
-
-struct GameRootView: View {
-    @StateObject private var game = GameController()
+struct NativeGameRoot: View {
+    @EnvironmentObject var store: NativeGameStore
     @Environment(\.scenePhase) private var scenePhase
-
     var body: some View {
         VStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 7) {
-                HStack {
-                    Label("Finanz Game", systemImage: "chart.line.uptrend.xyaxis.circle.fill")
-                        .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                    Spacer()
-                    Text("SIMULATION").font(.system(size: 9, weight: .semibold, design: .rounded))
-                        .padding(.horizontal, 9).padding(.vertical, 4)
-                        .background(.thinMaterial, in: Capsule())
-                }
-                HStack(alignment: .firstTextBaseline) {
-                    Text("Kontostand").font(.caption).foregroundStyle(.secondary)
-                    Spacer(minLength: 12)
-                    Text(game.balanceText)
-                        .font(.system(size: 29, weight: .bold, design: .rounded))
-                        .monospacedDigit().lineLimit(1).minimumScaleFactor(0.55)
-                        .accessibilityLabel("Kontostand " + game.balanceText)
-                }
-            }.padding(.horizontal, 20).padding(.vertical, 12)
-                .background(.regularMaterial)
-
-
-            ZStack(alignment: .bottom) {
-                GameWebView(webView: game.webView)
-                if !game.ready { ProgressView("Dein Spiel wird geladen …").frame(maxWidth: .infinity, maxHeight: .infinity).background(.background) }
+            WalletHeader()
+            if store.loading { Spacer(); ProgressView("Spielstand wird übernommen …"); Spacer() }
+            else if store.state.isNull { Spacer();EmptyPanel(title:"Spieldateien nicht verfügbar",description:"Öffne das vollständige Xcode-Projekt und baue die App erneut.");Spacer() }
+            else {
+                TabView(selection: $store.tab) {
+                    NavigationStack { CareerScreen() }.tabItem { Label(GameTab.career.title, systemImage: GameTab.career.symbol) }.tag(GameTab.career)
+                    NavigationStack { WealthScreen() }.tabItem { Label(GameTab.wealth.title, systemImage: GameTab.wealth.symbol) }.tag(GameTab.wealth)
+                    NavigationStack { EarnScreen() }.tabItem { Label(GameTab.earn.title, systemImage: GameTab.earn.symbol) }.tag(GameTab.earn)
+                    NavigationStack { LifeScreen() }.tabItem { Label(GameTab.life.title, systemImage: GameTab.life.symbol) }.tag(GameTab.life)
+                    NavigationStack { SettingsScreen() }.tabItem { Label(GameTab.settings.title, systemImage: GameTab.settings.symbol) }.tag(GameTab.settings)
+                }.tint(.gameGold)
             }
-
-            // System TabView adopts Liquid Glass automatically on iOS 26 with the iOS 26 SDK.
-            // iOS 17–18 use the native material tab bar provided by that OS.
-            TabView(selection: $game.selection) {
-                ForEach(GameTab.allCases) { tab in
-                    Color.clear
-                        .tabItem { Label(tab.title, systemImage: tab.symbol) }
-                        .tag(tab)
-                }
-            }.frame(height: 58).tint(.teal)
         }
-        .preferredColorScheme(game.appearance == "system" ? nil : game.appearance == "dark" ? .dark : .light)
-        .onChange(of: game.selection) { _, tab in game.navigate(tab) }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active { game.foreground() }
-            else { game.background() }
-        }
-        .fileImporter(isPresented: $game.showImporter, allowedContentTypes: [.json], onCompletion: game.importSave)
-        .sheet(isPresented: Binding(get: { game.exportURL != nil }, set: { if !$0 { game.exportURL = nil } })) {
-            if let url = game.exportURL { ShareSheet(url: url).presentationDetents([.medium, .large]) }
-        }
-        .alert("Finanz Game", isPresented: Binding(get: { game.errorMessage != nil }, set: { if !$0 { game.errorMessage = nil } })) {
-            Button("OK") { game.errorMessage = nil }
-        } message: { Text(game.errorMessage ?? "") }
+        .overlay(alignment: .bottom) { if let toast = store.toast { Text(toast).font(.subheadline.weight(.medium)).multilineTextAlignment(.center).padding(15).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 17)).shadow(color: .black.opacity(0.12), radius: 20).padding(.horizontal, 20).padding(.bottom, 88).allowsHitTesting(false).accessibilityAddTraits(.updatesFrequently) } }
+        .onChange(of: store.tab) { _, _ in store.hold(false) }
+        .onChange(of: scenePhase) { _, phase in if phase == .active { store.resume() } else { store.pause() } }
+        .alert("Finanz Game", isPresented: Binding(get: { store.failure != nil }, set: { if !$0 { store.failure = nil } })) { Button("OK") { store.failure = nil } } message: { Text(store.failure ?? "") }
     }
 }
-
-struct GameWebView: UIViewRepresentable {
-    let webView: WKWebView
-    func makeUIView(context: Context) -> WKWebView { webView }
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+struct WalletHeader: View {
+    @EnvironmentObject var store: NativeGameStore
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Label("FINANZ GAME", systemImage: "chart.line.uptrend.xyaxis.circle.fill").font(.system(size: 11, weight: .bold, design: .rounded)).tracking(1.4).foregroundStyle(Color.gameGold)
+                Spacer(); Text("FIKTIVE SIMULATION").font(.system(size: 8, weight: .semibold)).foregroundStyle(.secondary)
+            }
+            HStack(alignment: .firstTextBaseline) {
+                Text("Kontostand").font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                Text(store.loading ? "…" : store.money(store.state["cash"].number)).font(.system(size: 30, weight: .bold, design: .rounded)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.5).accessibilityLabel("Kontostand " + store.money(store.state["cash"].number)).accessibilityIdentifier("wallet.balance")
+            }
+        }.padding(.horizontal, 21).padding(.vertical, 13).background(.regularMaterial).overlay(alignment: .bottom) { Divider().opacity(0.4) }
+    }
 }
-
-struct ShareSheet: UIViewControllerRepresentable {
-    let url: URL
-    func makeUIViewController(context: Context) -> UIActivityViewController { UIActivityViewController(activityItems: [url], applicationActivities: nil) }
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+struct EarnScreen: View {
+    @EnvironmentObject var store: NativeGameStore
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var pressing = false
+    @State private var bankSheet = false
+    var body: some View {
+        GamePage {
+            PageHeading(title: "Dein nächster Euro.", subtitle: "Deine Karte. Dein Tempo. Dein Finanz Game.")
+            Picker("Verdienst-Modus", selection: $store.preferences.earningMode) { Text("Tippen · 1 €").tag("tap"); Text("Halten · 1 €/s").tag("hold") }.pickerStyle(.segmented)
+            NativeBankCard(bank: store.state["bank"].string, pressed: pressing)
+                .scaleEffect(pressing && !reduceMotion && store.preferences.motion ? 0.985 : 1)
+                .animation(reduceMotion || !store.preferences.motion ? nil : .spring(response: 0.25), value: pressing)
+                .gesture(DragGesture(minimumDistance: 0).onChanged { _ in pressing = true; if store.preferences.earningMode == "hold" { store.hold(true) } }.onEnded { value in
+                    pressing = false; store.hold(false)
+                    if store.preferences.earningMode == "tap" && abs(value.translation.width) < 25 && abs(value.translation.height) < 25 { store.tap() }
+                })
+                .accessibilityIdentifier("earn.card").accessibilityElement(children: .ignore).accessibilityLabel("Virtuelle \(store.state["bank"].string)-Karte").accessibilityHint("Tippen verdient einen Spiel-Euro. Im Halte-Modus Finger gedrückt halten.").accessibilityAddTraits(.isButton).accessibilityAction { store.tap() }
+            HStack { Label(store.preferences.earningMode == "tap" ? "1 Spiel-Euro pro Tipp" : "1 Spiel-Euro pro Sekunde", systemImage: "hand.tap").font(.caption).foregroundStyle(.secondary); Spacer(); Button("Bank wechseln") { bankSheet = true }.font(.caption.weight(.semibold)) }
+            PayDayPanel()
+            HStack(spacing: 12) { MetricTile(title: "Nettovermögen", value: store.money(store.derived("net").number, compact: true), symbol: "chart.pie"); MetricTile(title: "Aktueller Job", value: store.currentJob.isNull ? "Noch offen" : store.currentJob["name"].string, symbol: "briefcase") }
+            GamePanel {
+                SectionHeading(title: "Deine nächsten Schritte", symbol: "arrow.up.right")
+                Button { store.tab = .career } label: { Label("Karriere & Monatsaufgabe", systemImage: "briefcase.fill").frame(maxWidth: .infinity, alignment: .leading) }
+                Divider()
+                Button { store.tab = .wealth } label: { Label("Investieren & Firma gründen", systemImage: "building.2.fill").frame(maxWidth: .infinity, alignment: .leading) }
+            }
+        }
+        .navigationBarHidden(true)
+        .onDisappear { pressing = false; store.hold(false) }
+        .onChange(of: store.preferences.earningMode) { _, _ in pressing = false; store.hold(false) }
+        .sheet(isPresented: $bankSheet) {
+            NavigationStack { List(store.banks, id: \.self) { bank in Button { if store.perform("changeBank", [bank]) { bankSheet = false } } label: { HStack { Text(bank); Spacer(); if store.state["bank"].string == bank { Image(systemName: "checkmark.circle.fill") } } } }.navigationTitle("Deine virtuelle Bank").toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Fertig") { bankSheet = false } } }.safeAreaInset(edge: .bottom) { Text("Eigene Spielkarten. Keine echten Bankkonten oder Zahlungen.").font(.caption).foregroundStyle(.secondary).padding() } }
+        }
+    }
+}
+struct NativeBankCard: View {
+    let bank: String; let pressed: Bool
+    var colors: [Color] {
+        switch bank {
+        case "Raiffeisen": [Color(red:0.88,green:0.68,blue:0.17),Color(red:1,green:0.88,blue:0.49),Color(red:0.73,green:0.53,blue:0.12)]
+        case "Sparkasse": [Color(red:0.53,green:0.06,blue:0.15),Color(red:0.9,green:0.19,blue:0.3),Color(red:0.58,green:0.07,blue:0.18)]
+        case "Volksbank": [.gameNavy,Color(red:0.2,green:0.4,blue:0.7),Color(red:0.09,green:0.17,blue:0.35)]
+        case "N26": [Color(red:0.65,green:0.8,blue:0.76),Color(red:0.9,green:0.97,blue:0.93),Color(red:0.59,green:0.73,blue:0.69)]
+        case "Revolut": [.gray,Color(red:0.9,green:0.88,blue:0.96),Color(red:0.48,green:0.46,blue:0.55)]
+        default: [.gameNavy,Color(red:0.3,green:0.32,blue:0.4),Color(red:0.53,green:0.1,blue:0.23)]
+        }
+    }
+    var darkInk: Bool { ["Raiffeisen","N26","Revolut"].contains(bank) }
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 25).fill(LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing))
+            GeometryReader { g in Path { p in p.move(to: CGPoint(x:g.size.width*0.6,y:-40)); p.addCurve(to:CGPoint(x:g.size.width+80,y:g.size.height+40),control1:CGPoint(x:g.size.width*0.2,y:g.size.height*0.5),control2:CGPoint(x:g.size.width*1.2,y:20)) }.stroke(.white.opacity(0.2),lineWidth:70) }.clipShape(RoundedRectangle(cornerRadius:25))
+            VStack(alignment: .leading, spacing: 0) {
+                HStack { Text(bank).font(.title3.weight(.bold)); Spacer(); Text("SIMULATION").font(.system(size: 8,weight:.bold)).tracking(1).padding(7).overlay(RoundedRectangle(cornerRadius:6).stroke(.primary.opacity(0.2))) }
+                Spacer(minLength: 18)
+                HStack(spacing: 13) { Image(systemName: "simcard").font(.system(size: 31)).foregroundStyle(Color(red:0.78,green:0.65,blue:0.33)); Image(systemName: "wave.3.right").font(.title3).opacity(0.6) }
+                Spacer(minLength: 15)
+                Text("••••  ••••  ••••  2048").font(.system(size: 17,weight:.medium,design:.monospaced)).tracking(1.6)
+                HStack { Text("FINANZ GAME"); Spacer(); Text("VIRTUELLE DEBITKARTE") }.font(.system(size:8,weight:.semibold)).tracking(1).padding(.top,15)
+            }.padding(25)
+        }.foregroundStyle(darkInk ? Color.gameNavy : .white).aspectRatio(1.586,contentMode:.fit).shadow(color:colors[0].opacity(0.2),radius:18,y:10).brightness(pressed ? 0.04 : 0)
+    }
 }
