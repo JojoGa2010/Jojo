@@ -1,0 +1,17 @@
+FINANZ GAME – SO STARTET DEINE NEUE APP
+
+1. FinanzGame.xcodeproj doppelklicken.
+2. Oben in Xcode „FinanzGame“ und einen iPhone-Simulator wählen.
+3. Auf ▶ drücken.
+
+Unten: Karriere | Vermögen | Verdienen | Essen | Einstellungen.
+Die Karte ist in der Mitte. Essen und Gesundheit findest du nur unter Essen.
+
+Dein echtes iPhone: Signing & Capabilities → Team → dein Apple-Konto.
+Dann dein iPhone anschließen, als Ziel wählen und ▶ drücken.
+
+Spielstand sichern: Einstellungen → Spielstand exportieren.
+Alten Browser-Stand zuerst im Browser exportieren, dann hier importieren.
+Die App nicht löschen, bevor du deinen Spielstand gesichert hast.
+
+Mehr zu den Spielregeln und zum Speicherstand steht in README.md.
