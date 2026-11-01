@@ -4,7 +4,7 @@
   let attempts = 0;
   const ready = setInterval(() => {
     attempts++;
-    if (!document.querySelector('#home #bMk') || typeof names !== 'function' || typeof beginGame !== 'function') {
+    if (!document.querySelector('#home #bMk') || typeof names !== 'function' || typeof beginGame !== 'function' || document.documentElement.dataset.kkPlayers !== '6') {
       if (attempts > 600) clearInterval(ready);
       return;
     }
@@ -62,9 +62,9 @@
     const panel = document.createElement('div');
     panel.style.cssText = 'background:#2d1b69;padding:24px;border-radius:20px;max-width:440px;display:grid;gap:16px;text-align:center';
     const title = document.createElement('strong'); title.textContent = 'Admin hat das Spiel verlassen';
-    const homeLink = document.createElement('a'); homeLink.href = config.home || '/'; homeLink.dataset.kkHome = '1';
+    const homeLink = document.createElement('a'); homeLink.href = config.game || '/spiel/'; homeLink.dataset.kkHome = '1';
     const homeMark=document.createElement('img');homeMark.src=(config.assets||'/')+'logo.svg';homeMark.alt='';homeMark.width=28;homeMark.height=28;
-    homeLink.append(homeMark,document.createTextNode('Kegel-Krach · Startseite'));homeLink.style.cssText='color:#ffd60a;text-decoration:none;padding:10px;display:flex;align-items:center;justify-content:center;gap:8px';
+    homeLink.append(homeMark,document.createTextNode('Kegel-Krach · Start-Lobby'));homeLink.style.cssText='color:#ffd60a;text-decoration:none;padding:10px;display:flex;align-items:center;justify-content:center;gap:8px';
     const explanation = document.createElement('p'); explanation.setAttribute('aria-live', 'polite');
     const yes = document.createElement('button'); yes.textContent = 'Ja, ich übernehme';
     const no = document.createElement('button'); no.className = 'g'; no.textContent = 'Nein, danke';
@@ -360,7 +360,7 @@
           opens[item.code] = { ...item, t: Date.now() };
           const button = document.createElement('button');
           button.className = 'g';
-          button.textContent = '🎳 ' + item.n + ' · ' + item.c + '/4 · beitreten';
+          button.textContent = '🎳 ' + item.n + ' · ' + item.c + '/6 · beitreten';
           button.onclick = () => joinCode(item.code);
           target.append(button);
         }
@@ -386,7 +386,7 @@
       if (!isHost || !R || button.disabled) return;
       const players = L.map(p => ({ ...p }));
       if (document.querySelector('#fill').checked) {
-        while (players.length < 4) players.push({ n: BN[players.length - 1] || 'Bot', skin: rnd(4), bot: 1, uid: 'B' + players.length });
+        while (players.length < Math.max(L.length, Number(document.querySelector('#kk-fill-count').value))) players.push({ n: BN[players.length - 1] || 'Bot', skin: rnd(10), bot: 1, uid: 'B' + players.length });
       }
       if (players.length < 2) { document.querySelector('#lw').textContent = 'Mindestens zwei Spieler: Bots aktivieren oder auf Freunde warten.'; return; }
       button.disabled = true;

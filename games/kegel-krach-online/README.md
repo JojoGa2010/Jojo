@@ -1,19 +1,37 @@
-# Kegel-Krach Online 1.6 für WordPress
+# Kegel-Krach Online 1.7 für WordPress
 
 ## Update installieren
 
-1. **Kegel-Krach-Online-v1.6.zip** herunterladen und nicht entpacken.
+1. **Kegel-Krach-Online-v1.7.zip** herunterladen und nicht entpacken.
 2. WordPress: **Plugins → Neues Plugin hinzufügen → Plugin hochladen**.
 3. ZIP auswählen und **Aktuelles durch hochgeladenes ersetzen** bestätigen.
 4. Falls nötig Plugin aktivieren, **WP-Rocket-Cache leeren** und die Spielseite auf allen Geräten neu laden.
 
 Den bestehenden Spielcode in Elementor stehen lassen. Laufende Partien vor dem Update beenden.
 
-## Neu in Version 1.6
+## Neu in Version 1.7
+
+- Das Logo führt zur **Start-Lobby des Spiels** (`/spiel/`), auch aus einer laufenden Partie. Eine Online-Lobby wird vorher nach Möglichkeit verlassen. Es erfolgt keine Navigation mehr auf die allgemeine Website-Homepage.
+- Die sichtbare Monats-/Designbeschriftung ist entfernt. Auch der Browser-Titel lautet nur **Kegel-Krach**. Die Monatsgestaltung und saisonalen Partikel bleiben erhalten.
+- Bis zu **sechs Spieler** sind möglich. Zwei bis vier Spieler behalten das ursprüngliche Brett. Für fünf oder sechs Spieler gibt es eine Anordnung mit sechs Startbereichen im gleichen Holz-, Farb- und Kegelstil, einer gemeinsamen Runde mit 60 Feldern und je vier Zielfeldern. Jeder Spieler behält vier Kegel. Lila und Orange ergänzen die Teamfarben.
+- Die Lobby zeigt sechs Plätze. Der Admin kann Bots auf insgesamt zwei bis sechs Spieler auffüllen lassen; die Voreinstellung bleibt vier. Solo sind bis zu fünf Bots möglich.
+- Es gibt **zehn Skins**: Klassik, Tonne, Spitzi, Boss, Pilot, Wikinger, Pirat, Zauberer, Ninja und Astronaut. Die ursprünglichen vier Skins sind pixelgenau unverändert. Alle Skins stehen in privaten, offenen und Bot-Partien zur Verfügung.
+
+### Extras an besonderen Tagen
+
+Das Monatsdesign wird an ausgewählten besonderen Tagen um rein grafische Details ergänzt, ohne den Tag oder das Design auszuschreiben. Jede Ergänzung gilt nur am jeweiligen lokalen Kalendertag. Um Mitternacht beziehungsweise bei Rückkehr in den Browser werden die Extras aktualisiert oder entfernt. Die Farb-/Drehvarianten unterscheiden sich nach Tag und Jahr; es gibt drei wechselnde Varianten.
+
+Enthalten sind Neujahr, Dreikönigstag, Valentinstag, Ostersonntag/-montag, 1. Mai, Pfingstsonntag/-montag, österreichischer Nationalfeiertag, Halloween, Allerheiligen/Allerseelen, Nikolaus, Weihnachtsabend, Weihnachten, 26. Dezember und Silvester. Weihnachten erhält beispielsweise Tannen, der Weihnachtsabend Sterne und der Folgetag Geschenke. Die beweglichen Termine werden für den gregorianischen Kalender jährlich berechnet. Die übrigen saisonalen Partikel bleiben zum Großteil erhalten.
+
+Für die Testdaten der Osterberechnung wurden die [Datumslisten des US Census Bureau](https://www.census.gov/data/software/x13as/genhol/easter-dates.html) herangezogen.
+
+Zusätzliche Prüfungen: sechs getrennte Spielclients würfeln und bewegen nacheinander bei identischen Spielständen; Kapazität und Server-Spielstart für sechs Personen; Schlagen, Blockieren, exakte Zielfelder und Sieg; Antippen der neuen Skins; Rendering aller Skins und des Sechserbretts; Rückkehr zur Start-Lobby, fehlende Designbeschriftung und Ablauf der Festtags-Extras. Entwickler: `npm run test:players -- /absoluter/Pfad/Kegel-Krach.html /absoluter/Ausgabeordner`.
+
+## Weiterhin enthalten: Version 1.6
 
 Ein Kick sperrt nicht nur die Sitzung auf dem Server: Die entfernte Person wird aus der Lobby-Ansicht ins Spielmenü zurückgeschickt. Dort steht dauerhaft **„Du wurdest vom Admin aus der Gruppe entfernt. Du bist nicht mehr in dieser Lobby.“** bis sie **Verstanden** wählt oder eine neue Lobby öffnet. Alte Nachrichten/Antworten einer bereits geschlossenen Verbindung verändern keine neu eröffnete Lobby.
 
-Jeder Monat erhält einen eigenen Hintergrund mit Muster, passende Menükarten, Akzentfarben, Dialogfarben und ein eigenes Brett-Farbschema. Die Teamfarben und ursprünglichen Kegel bleiben erhalten. Im Menü steht die aktuelle Monatsausgabe.
+Jeder Monat erhält einen eigenen Hintergrund mit Muster, passende Menükarten, Akzentfarben, Dialogfarben und ein eigenes Brett-Farbschema. Die Teamfarben und ursprünglichen Kegel bleiben erhalten. Monat und Design werden nicht ausgeschrieben.
 
 | Monat | Gestaltung |
 | --- | --- |
@@ -58,9 +76,9 @@ Nach 60 Sekunden ohne menschliche Eingabe oder ohne Verbindung verliert der Admi
 
 Bei Annahme wird der zuletzt auf dem Server gespeicherte Stand übernommen; Figuren des ausgeschiedenen Admins werden zu Bots. Der frühere Admin kann mit seiner alten Sitzung nicht mehr eingreifen. Ein Neuladen stellt die eigene Sitzung nicht wieder her.
 
-## Logo und Startseite
+## Logo und Start-Lobby
 
-Das dauerhaft sichtbare Kegel-Krach-Logo, die Überschriften und der Admin-Dialog verlinken die WordPress-Website-Startseite (`home_url`). Auch reguläre WordPress-Logos werden auf allen Seiten auf diese Adresse gesetzt. Vor Navigation wird die Online-Lobby nach Möglichkeit verlassen; ein Verbindungsproblem blockiert die Navigation höchstens 1,2 Sekunden.
+Das dauerhaft sichtbare Kegel-Krach-Logo, die Überschriften und der Admin-Dialog verlinken die Start-Lobby des Spiels (`/spiel/`). Auch reguläre WordPress-Logos werden auf allen Seiten auf diese Adresse gesetzt. Vor Navigation wird die Online-Lobby nach Möglichkeit verlassen; ein Verbindungsproblem blockiert die Navigation höchstens 1,2 Sekunden.
 
 ## Voraussetzungen und Fehlerbehebung
 

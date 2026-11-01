@@ -1,17 +1,17 @@
 /* Responsive controls and a consistent route to the website home page. */
 (() => {
   const config=window.KKOnlineConfig||{};
-  const home=config.home||'/';
+  const home=config.game||(document.querySelector('#home #bMk')?window.location.pathname:'/spiel/');
   document.querySelectorAll('.custom-logo-link,.site-branding a[rel="home"],a.brand[rel="home"],.site-logo a').forEach(link=>{link.href=home;link.dataset.kkHome='1';});
   document.querySelectorAll('img.custom-logo').forEach(image=>{
     let link=image.closest('a');
     if(!link){link=document.createElement('a');image.replaceWith(link);link.append(image);}
-    link.href=home;link.dataset.kkHome='1';link.setAttribute('aria-label','Zur Startseite');
+    link.href=home;link.dataset.kkHome='1';link.setAttribute('aria-label','Zur Start-Lobby');
   });
   if(!document.querySelector('#home #bMk'))return;
   let tries=0;
   const ready=setInterval(()=>{
-    if(typeof ui!=='function'||typeof act!=='function'||!document.querySelector('#game')){if(++tries>600)clearInterval(ready);return;}
+    if(typeof ui!=='function'||typeof act!=='function'||document.documentElement.dataset.kkPlayers!=='6'||!document.querySelector('#game')){if(++tries>600)clearInterval(ready);return;}
     clearInterval(ready);install();
   },300);
   function install(){
@@ -19,10 +19,10 @@
     document.documentElement.dataset.kkControls='1';
     const game=document.querySelector('#game');
     function mark(){const image=document.createElement('img');image.src=(config.assets||'/')+'logo.svg';image.alt='';image.width=32;image.height=32;return image;}
-    const brand=document.createElement('a');brand.id='kk-home-logo';brand.href=home;brand.dataset.kkHome='1';brand.append(mark(),document.createTextNode('Kegel-Krach'));brand.setAttribute('aria-label','Zur Startseite');document.body.append(brand);
+    const brand=document.createElement('a');brand.id='kk-home-logo';brand.href=home;brand.dataset.kkHome='1';brand.append(mark(),document.createTextNode('Kegel-Krach'));brand.setAttribute('aria-label','Zur Start-Lobby');document.body.append(brand);
     for(const heading of document.querySelectorAll('#home h1,#lobby h1')){
       if(heading.closest('a'))continue;
-      const link=document.createElement('a');link.href=home;link.dataset.kkHome='1';link.setAttribute('aria-label','Zur Startseite');
+      const link=document.createElement('a');link.href=home;link.dataset.kkHome='1';link.setAttribute('aria-label','Zur Start-Lobby');
       const label=heading.closest('#home')?'Kegel-Krach':'Lobby';
       for(const node of [...heading.childNodes])if(node.nodeType===3)node.remove();
       if(heading.closest('#home'))link.append(mark());
@@ -31,10 +31,10 @@
     }
     document.addEventListener('click',async event=>{
       const link=event.target.closest&&event.target.closest('a[data-kk-home]');
-      if(!link||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||!R)return;
+      if(!link||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
       event.preventDefault();
       // The online module supplies a clean departure before navigation.
-      if(window.KKOnlineLeave)await Promise.race([window.KKOnlineLeave(),new Promise(resolve=>setTimeout(resolve,1200))]);
+      if(R&&window.KKOnlineLeave)await Promise.race([window.KKOnlineLeave(),new Promise(resolve=>setTimeout(resolve,1200))]);
       window.location.assign(home);
     });
     const clock=document.createElement('small');clock.id='kk-stopwatch';clock.setAttribute('role','timer');clock.setAttribute('aria-live','off');clock.title='Spielzeit';

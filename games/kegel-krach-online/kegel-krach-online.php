@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kegel-Krach Online
  * Description: Verbindet das bestehende Kegel-Krach-HTML-Spiel mit privaten und offenen WordPress-Lobbys.
- * Version: 1.6.0
+ * Version: 1.7.0
  * Requires PHP: 7.4
  * Author: Digitalwohnen
  */
@@ -31,10 +31,10 @@ final class KK_Online {
     public static function assets() {
         // Loading on all public pages also supports Elementor HTML widgets and changed slugs.
         // The client does nothing unless the original Kegel-Krach game is present.
-        echo '<script data-nowprocket="" data-cfasync="false">window.KKOnlineConfig=' . wp_json_encode(array('api' => rest_url('kegel-krach/v1/'), 'home' => home_url('/'), 'assets' => plugins_url('assets/', __FILE__)), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
-        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=1.6.0">';
-        foreach (array('themes.js','visuals.js','online.js','controls.js') as $file) {
-            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=1.6.0"></script>';
+        echo '<script data-nowprocket="" data-cfasync="false">window.KKOnlineConfig=' . wp_json_encode(array('api' => rest_url('kegel-krach/v1/'), 'home' => home_url('/'), 'game' => home_url('/spiel/'), 'assets' => plugins_url('assets/', __FILE__)), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
+        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=1.7.0">';
+        foreach (array('themes.js','players.js','visuals.js','online.js','controls.js') as $file) {
+            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=1.7.0"></script>';
         }
     }
     public static function routes() {
@@ -106,7 +106,7 @@ final class KK_Online {
             $out = array();
             foreach ($rows as $json) {
                 $room = json_decode($json, true);
-                if (!$room || !$room['public'] || $room['started'] || empty($room['host_uid']) || $room['host_seen'] <= $now - 60 || count($room['members']) >= 4) { continue; }
+                if (!$room || !$room['public'] || $room['started'] || empty($room['host_uid']) || $room['host_seen'] <= $now - 60 || count($room['members']) >= 6) { continue; }
                 $out[] = array('code' => $room['code'], 'n' => $room['members'][0]['n'], 'c' => count($room['members']));
                 if (count($out) >= 20) { break; }
             }
@@ -117,7 +117,7 @@ final class KK_Online {
             $uid = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($body['uid'] ?? ''));
             if (strlen($uid) < 3 || strlen($uid) > 40) { return self::fail('Ungültige Spielerkennung.'); }
             $token = bin2hex(random_bytes(24));
-            $member = array('uid' => $uid, 'n' => mb_substr(sanitize_text_field($body['n'] ?? 'Kegler'), 0, 14), 'skin' => max(0, min(3, (int) ($body['skin'] ?? 0))), 'hash' => hash('sha256', $token), 'seen' => $now, 'chat_at' => 0, 'act_at' => 0);
+            $member = array('uid' => $uid, 'n' => mb_substr(sanitize_text_field($body['n'] ?? 'Kegler'), 0, 14), 'skin' => max(0, min(9, (int) ($body['skin'] ?? 0))), 'hash' => hash('sha256', $token), 'seen' => $now, 'chat_at' => 0, 'act_at' => 0);
             if ($op === 'create') {
                 for ($i = 0; $i < 12; $i++) {
                     $code = '';
@@ -150,7 +150,7 @@ final class KK_Online {
             if ($op === 'join') {
                 if (!$room['host_uid'] || $room['host_seen'] <= $now - 60 || $room['host_active'] <= $now - 60) { return self::fail('Die Lobby sucht gerade einen neuen Admin. Bitte kurz warten.', 409); }
                 if ($room['started']) { return self::fail('Dieses Spiel läuft bereits.'); }
-                if (count($room['members']) >= 4) { return self::fail('Diese Lobby ist bereits voll.'); }
+                if (count($room['members']) >= 6) { return self::fail('Diese Lobby ist bereits voll.'); }
                 foreach ($room['members'] as $p) { if ($p['uid'] === $member['uid']) { return self::fail('Du bist dieser Lobby bereits beigetreten.'); } }
                 $room['members'][] = $member;
                 $reply = array('code' => $code, 'token' => $token, 'seq' => $room['seq'], 'epoch' => $room['epoch']);
@@ -220,7 +220,7 @@ final class KK_Online {
                         self::event($room, $type, $data, $p['uid']);
                     } elseif ($type === 'game') {
                         if (!$host || $room['started']) { return self::fail('Spiel kann nicht gestartet werden.', 403); }
-                        if (!isset($data['G']['pl']) || !is_array($data['G']['pl']) || count($data['G']['pl']) < 2 || count($data['G']['pl']) > 4) { return self::fail('Mindestens zwei Spieler oder Bots erforderlich.'); }
+                        if (!isset($data['G']['pl']) || !is_array($data['G']['pl']) || count($data['G']['pl']) < 2 || count($data['G']['pl']) > 6) { return self::fail('Mindestens zwei Spieler oder Bots erforderlich.'); }
                         $human_ids = array();
                         foreach ($data['G']['pl'] as $player) { if (empty($player['bot'])) { $human_ids[] = $player['uid'] ?? ''; } }
                         $registered = array_column($room['members'], 'uid');

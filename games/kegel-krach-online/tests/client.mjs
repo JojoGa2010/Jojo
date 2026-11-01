@@ -80,8 +80,9 @@ function client(name) {
   w.fetch = fetchMock;
   w.AbortController = AbortController;
   w.matchMedia=()=>({matches:mobileMode,addEventListener(){},removeEventListener(){}});
-  w.KKOnlineConfig = { api: '/wp-json/kegel-krach/v1/' };
+  w.KKOnlineConfig = { api: '/wp-json/kegel-krach/v1/',game:'/spiel/' };
   w.eval(source);
+  w.eval(readFileSync(new URL('../assets/players.js',import.meta.url),'utf8'));
   w.eval(readFileSync(new URL('../assets/themes.js',import.meta.url),'utf8'));
   w.eval(readFileSync(new URL('../assets/visuals.js', import.meta.url), 'utf8'));
   w.eval("dice=async()=>{};ride=async()=>{};hop=async()=>{};kick=async()=>{};homeCam=async()=>{};");
@@ -111,10 +112,10 @@ try {
   await until(() => B('G !== null'), 'guest game start');
   assert.equal(A('JSON.stringify(G)'), B('JSON.stringify(G)'));
   console.log('PASS: both clients start with identical game state');
-  assert.equal(a.window.document.querySelector('#kk-home-logo').getAttribute('href'),'/');
-  assert.equal(a.window.document.querySelector('#home h1 a').getAttribute('href'),'/');
-  assert.equal(a.window.document.querySelector('#lobby h1 a').getAttribute('href'),'/');
-  console.log('PASS: persistent logo and screen headings link to website home');
+  assert.equal(a.window.document.querySelector('#kk-home-logo').getAttribute('href'),'/spiel/');
+  assert.equal(a.window.document.querySelector('#home h1 a').getAttribute('href'),'/spiel/');
+  assert.equal(a.window.document.querySelector('#lobby h1 a').getAttribute('href'),'/spiel/');
+  console.log('PASS: persistent logo and screen headings link to game start lobby');
   a.window.Math.random = () => .95;
   assert.equal(a.window.document.querySelector('#kk-roll'),null);
   assert.equal(a.window.document.querySelector('#kk-moves'),null);
@@ -187,6 +188,36 @@ try {
     console.log('PASS: kicked player leaves lobby, loses connection and sees dismissible removal message');
     console.log('PASS: admin kick removes guest from displayed and server lobby');
   } finally { c.window.close(); }
+  {
+    const group=Array.from({length:6},(_,i)=>client('Spieler '+(i+1)));
+    try{
+      await until(()=>group.every(d=>d.window.document.documentElement.dataset.kkOnline),'six adapters');
+      for(let i=0;i<6;i++){
+        group[i].window.eval('me.skin='+(i+4));
+        let time=0;Object.defineProperty(group[i].window.performance,'now',{value:()=>{time+=250;return time;}});
+        group[i].window.requestAnimationFrame=f=>group[i].window.setTimeout(f,0);
+      }
+      await group[0].window.eval('mkLobby(false)');const code=group[0].window.eval('R.code');
+      for(let i=1;i<6;i++)await group[i].window.eval('joinCode('+JSON.stringify(code)+')');
+      await until(()=>group.every(d=>d.window.eval('L.length')===6),'six members');
+      assert.equal(group[0].window.document.querySelectorAll('#lp .sl').length,6);
+      assert.equal(group[0].window.document.querySelectorAll('#sks .sk').length,10);
+      await group[0].window.document.querySelector('#bSt').onclick();
+      await until(()=>group.every(d=>d.window.eval('G && G.pl.length===6')),'six game start');
+      for(let k=0;k<6;k++){
+        for(const value of [.95,.2]){
+          group[0].window.Math.random=()=>value;
+          group[k].window.eval("act({t:'roll'})");
+          await until(()=>group.every(d=>d.window.eval("!busy && G.phase==='move'")),'six roll '+k);
+          group[k].window.eval("act({t:'move',i:0})");
+          await until(()=>group.every(d=>d.window.eval('!busy && G.phase===\'roll\' && G.pc['+k+'][0]==='+(value===.95?0:2))),'six move '+k);
+        }
+      }
+      const state=group[0].window.eval('JSON.stringify(G)');
+      for(const d of group)assert.equal(d.window.eval('JSON.stringify(G)'),state);
+      console.log('PASS: six connected clients with skins 4–9 start, roll and move in turn; snapshots identical');
+    }finally{for(const d of group)d.window.close();}
+  }
   if(mobileMode){
     const solo=client('Solo');
     try{
@@ -223,7 +254,7 @@ try {
   }
 } finally { a.window.close(); b.window.close(); }
 const site=new JSDOM('<a class="custom-logo-link" href="/old"><img class="custom-logo"></a>',{url:'https://example.test/',runScripts:'outside-only'});
-site.window.KKOnlineConfig={home:'/start/'};
+site.window.KKOnlineConfig={game:'/spiel/'};
 site.window.eval(readFileSync(new URL('../assets/controls.js',import.meta.url),'utf8'));
-assert.equal(site.window.document.querySelector('a').getAttribute('href'),'/start/');
-site.window.close();console.log('PASS: website logo outside game also links to configured home');
+assert.equal(site.window.document.querySelector('a').getAttribute('href'),'/spiel/');
+site.window.close();console.log('PASS: logo outside game also links to start lobby');
