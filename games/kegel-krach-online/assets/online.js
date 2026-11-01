@@ -164,6 +164,7 @@
         if (!response.ok) {
           const error = new Error(result.message || 'Verbindung zur Lobby fehlgeschlagen.');
           error.status = response.status;
+          error.code = result.code;
           throw error;
         }
         return result;
@@ -174,6 +175,24 @@
     }
 
     function fail(error) {
+      if (error.code === 'kk_kicked') {
+        if (R && R.close) R.close();
+        R=null;G=null;H=null;L=[];hl=[];busy=false;isHost=false;stamp++;
+        clearInterval(hi);clearInterval(pubT);clearInterval(olT);
+        transfer.hidden=true;
+        document.querySelector('#dpop').classList.remove('on');
+        document.querySelector('#pop').classList.remove('on');
+        show('home');document.querySelector('#bBk').onclick();
+        let notice=document.querySelector('#kk-kick-notice');
+        if(!notice){
+          notice=document.createElement('section');notice.id='kk-kick-notice';notice.className='card';notice.setAttribute('role','alert');
+          const text=document.createElement('p');text.textContent='Du wurdest vom Admin aus der Gruppe entfernt. Du bist nicht mehr in dieser Lobby.';
+          const dismiss=document.createElement('button');dismiss.textContent='Verstanden';dismiss.onclick=()=>{notice.hidden=true;};
+          notice.append(text,dismiss);document.querySelector('#home .wrap').prepend(notice);
+        }
+        notice.hidden=false;
+        return;
+      }
       const message = error.message || 'Verbindung unterbrochen.';
       const notice = document.querySelector('#oe');
       if (notice) notice.textContent = message;
@@ -224,6 +243,7 @@
             this.seq = event.seq;
           }
         } catch (error) {
+          if (this.closed || R !== this) return;
           this.failures++;
           if ([400, 403, 404, 409].includes(error.status) || this.failures >= 6) {
             this.close(); fail(error); return;
@@ -238,7 +258,7 @@
         });
         send.then(result => { if (result.paused) applyStatus(this, result.status); }).catch(() => {});
         // Legacy game calls emit without awaiting. Handle rejection here as well.
-        this.queue = send.catch(error => { this.close(); fail(error); });
+        this.queue = send.catch(error => { if(this.closed || R !== this)return; this.close(); fail(error); });
         return send;
       }
       close() { this.closed = true; clearTimeout(this.timer); }
@@ -283,6 +303,7 @@
 
     function player() { return { uid: me.uid, n: me.n, skin: me.skin }; }
     function resetConnection() {
+      const kickNotice=document.querySelector('#kk-kick-notice');if(kickNotice)kickNotice.hidden=true;
       lobbySignature = null;
       if (R && R.close) R.close();
       G = null; H = null; hl = []; busy = false; stamp++;

@@ -1,13 +1,14 @@
 {
   "name": "kegel-krach-online",
   "private": true,
-  "version": "1.5.0",
+  "version": "1.6.0",
   "type": "module",
   "scripts": {
-    "check": "node --check assets/online.js && node --check assets/visuals.js && node --check assets/controls.js",
+    "check": "node --check assets/online.js && node --check assets/visuals.js && node --check assets/controls.js && node --check assets/themes.js",
     "test:server": "node tests/run-server.mjs",
     "test:client": "node tests/client.mjs",
-    "test:visuals": "node tests/visuals.mjs"
+    "test:visuals": "node tests/visuals.mjs",
+    "test:themes": "node tests/themes.mjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "1.1.0",

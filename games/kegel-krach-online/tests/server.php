@@ -1,7 +1,7 @@
 <?php
 // Endpoint checks with a transactional in-memory wpdb test double.
 define('ABSPATH', '/wordpress/');
-class WP_Error { public $message; public $data; function __construct($code, $message, $data) { $this->message=$message; $this->data=$data; } }
+class WP_Error { public $code;public $message; public $data; function __construct($code, $message, $data) { $this->code=$code;$this->message=$message; $this->data=$data; } }
 class WP_REST_Response { public $data; function __construct($data) { $this->data=$data; } function header($a,$b) {} }
 function add_action(...$args) {} function register_activation_hook(...$args) {} function register_deactivation_hook(...$args) {}
 function wp_json_encode($data, $flags=0) { return json_encode($data,$flags); }
@@ -103,6 +103,7 @@ $kicked=call_api(['op'=>'kick','code'=>$kh['code'],'token'=>$kh['token'],'uid'=>
 ok(count($kicked->data['status']['L'])===1,'admin kick frees lobby slot');
 $removed=poll_room($kg);
 ok($removed instanceof WP_Error && str_contains($removed->message,'entfernt'),'kicked session revoked with clear explanation');
+ok($removed->code==='kk_kicked','kick has distinct machine-readable error code');
 ok(call_api(['op'=>'kick','code'=>$guest['code'],'token'=>$guest['token'],'uid'=>'host01']) instanceof WP_Error,'kick rejected after game starts');
 ob_start();KK_Online::assets();$assets=ob_get_clean();
 ok(str_contains($assets,'controls.css')&&str_contains($assets,'controls.js')&&str_contains($assets,'visuals.js')&&str_contains($assets,'online.js')&&str_contains($assets,'"home"'),'plugin serves mobile styles, controls and canonical home configuration');

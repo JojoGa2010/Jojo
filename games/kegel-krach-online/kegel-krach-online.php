@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kegel-Krach Online
  * Description: Verbindet das bestehende Kegel-Krach-HTML-Spiel mit privaten und offenen WordPress-Lobbys.
- * Version: 1.5.0
+ * Version: 1.6.0
  * Requires PHP: 7.4
  * Author: Digitalwohnen
  */
@@ -32,9 +32,9 @@ final class KK_Online {
         // Loading on all public pages also supports Elementor HTML widgets and changed slugs.
         // The client does nothing unless the original Kegel-Krach game is present.
         echo '<script data-nowprocket="" data-cfasync="false">window.KKOnlineConfig=' . wp_json_encode(array('api' => rest_url('kegel-krach/v1/'), 'home' => home_url('/'), 'assets' => plugins_url('assets/', __FILE__)), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
-        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=1.5.0">';
-        foreach (array('visuals.js','online.js','controls.js') as $file) {
-            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=1.5.0"></script>';
+        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=1.6.0">';
+        foreach (array('themes.js','visuals.js','online.js','controls.js') as $file) {
+            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=1.6.0"></script>';
         }
     }
     public static function routes() {
@@ -159,7 +159,7 @@ final class KK_Online {
                 $hash = hash('sha256', (string) ($body['token'] ?? ''));
                 foreach ($room['members'] as $i => $p) { if (hash_equals($p['hash'], $hash)) { $index = $i; break; } }
                 if ($index < 0) {
-                    if (in_array($hash, $room['kicked'] ?? array(), true)) { return self::fail('Der Admin hat dich aus der Lobby entfernt.', 403); }
+                    if (in_array($hash, $room['kicked'] ?? array(), true)) { return new WP_Error('kk_kicked', 'Der Admin hat dich aus der Lobby entfernt.', array('status' => 403)); }
                     return self::fail('Keine gültige Verbindung zur Lobby.', 403);
                 }
                 $p = $room['members'][$index];

@@ -27,12 +27,14 @@ async function fetchMock(_, options) {
   } else {
     const room = rooms.get(b.code);
     if (!room) return { ok: false, status: 404, json: async () => ({ message: 'Lobby nicht gefunden.' }) };
+    if(room.kicked&&room.kicked.has(b.token))return {ok:false,status:403,json:async()=>({code:'kk_kicked',message:'Der Admin hat dich aus der Lobby entfernt.'})};
     if (b.op === 'join') {
       const member = { uid: b.uid, n: b.n, skin: b.skin, token: b.uid + '-secret' };
       room.members.push(member);
       result = { code: b.code, token: member.token, seq: room.events.length };
     } else if (b.op === 'poll') result = { events: room.events.filter(e => e.seq > b.after),status:status(room),removed:!room.members.some(p=>p.token===b.token) };
     else if(b.op==='kick') {
+      room.kicked??=new Set();const target=room.members.find(p=>p.uid===b.uid);room.kicked.add(target.token);
       room.members=room.members.filter(p=>p.uid!==b.uid);
       result={ok:true,status:status(room)};
     }
@@ -80,6 +82,7 @@ function client(name) {
   w.matchMedia=()=>({matches:mobileMode,addEventListener(){},removeEventListener(){}});
   w.KKOnlineConfig = { api: '/wp-json/kegel-krach/v1/' };
   w.eval(source);
+  w.eval(readFileSync(new URL('../assets/themes.js',import.meta.url),'utf8'));
   w.eval(readFileSync(new URL('../assets/visuals.js', import.meta.url), 'utf8'));
   w.eval("dice=async()=>{};ride=async()=>{};hop=async()=>{};kick=async()=>{};homeCam=async()=>{};");
   w.eval(adapter);
@@ -175,6 +178,13 @@ try {
     await a.window.document.querySelector('#lp button').onclick();
     assert.equal(A('L.length'),1);
     assert.equal(rooms.get(A('R.code')).members.length,1);
+    await until(()=>c.window.eval('R')===null,'kicked client disconnected');
+    assert.equal(c.window.document.querySelector('#home').classList.contains('on'),true);
+    assert.equal(c.window.document.querySelector('#lobby').classList.contains('on'),false);
+    const notice=c.window.document.querySelector('#kk-kick-notice');
+    assert.equal(notice.hidden,false);assert.ok(notice.textContent.includes('vom Admin aus der Gruppe entfernt'));
+    notice.querySelector('button').click();assert.equal(notice.hidden,true);
+    console.log('PASS: kicked player leaves lobby, loses connection and sees dismissible removal message');
     console.log('PASS: admin kick removes guest from displayed and server lobby');
   } finally { c.window.close(); }
   if(mobileMode){

@@ -1,15 +1,42 @@
-# Kegel-Krach Online 1.5 für WordPress
+# Kegel-Krach Online 1.6 für WordPress
 
 ## Update installieren
 
-1. **Kegel-Krach-Online-v1.5.zip** herunterladen und nicht entpacken.
+1. **Kegel-Krach-Online-v1.6.zip** herunterladen und nicht entpacken.
 2. WordPress: **Plugins → Neues Plugin hinzufügen → Plugin hochladen**.
 3. ZIP auswählen und **Aktuelles durch hochgeladenes ersetzen** bestätigen.
 4. Falls nötig Plugin aktivieren, **WP-Rocket-Cache leeren** und die Spielseite auf allen Geräten neu laden.
 
 Den bestehenden Spielcode in Elementor stehen lassen. Laufende Partien vor dem Update beenden.
 
-## Änderungen in 1.5
+## Neu in Version 1.6
+
+Ein Kick sperrt nicht nur die Sitzung auf dem Server: Die entfernte Person wird aus der Lobby-Ansicht ins Spielmenü zurückgeschickt. Dort steht dauerhaft **„Du wurdest vom Admin aus der Gruppe entfernt. Du bist nicht mehr in dieser Lobby.“** bis sie **Verstanden** wählt oder eine neue Lobby öffnet. Alte Nachrichten/Antworten einer bereits geschlossenen Verbindung verändern keine neu eröffnete Lobby.
+
+Jeder Monat erhält einen eigenen Hintergrund mit Muster, passende Menükarten, Akzentfarben, Dialogfarben und ein eigenes Brett-Farbschema. Die Teamfarben und ursprünglichen Kegel bleiben erhalten. Im Menü steht die aktuelle Monatsausgabe.
+
+| Monat | Gestaltung |
+| --- | --- |
+| Januar | Eiskristalle, Eisblau |
+| Februar | Violetter Winterabend |
+| März | Erstes Grün |
+| April | Kühler Frühlingsregen |
+| Mai | Blütenwiese |
+| Juni | Sommer am Wasser |
+| Juli | Warme Sonnentage |
+| August | Spätsommer in Terrakotta |
+| September | Erntezeit |
+| Oktober | Goldener Herbst |
+| November | Nebel und Kupfer |
+| Dezember | Festlicher Winter |
+
+Die fallenden Elemente richten sich unabhängig davon nach der Jahreszeit: **Dezember–Februar Schnee/Eiskristalle**, **März–Mai Blüten**, **Juni–August goldene Licht-/Pollenpartikel**, **September–November Herbstblätter**. Während des Spiels sind sie dezenter und fangen keine Eingaben ab. Bei aktivierter Systemeinstellung für reduzierte Bewegung werden sie ausgeblendet.
+
+Die Datumswahl verwendet den Kalender des Geräts. Ein offenes Spiel prüft jede Minute und bei Rückkehr zum Browser, ob ein neuer Monat begonnen hat. Es ist kein monatliches Plugin-Update erforderlich. Die Advent-Ausnahme des ursprünglichen HTML wird durch das echte Dezember-/Novemberdesign ersetzt.
+
+Zusätzlich geprüft: alle zwölf unterschiedlichen Hintergrund- und Brett-Paletten, Jahreszeitengrenzen, unveränderte Figuren/Teamfarben und tatsächliche Rückkehr der gekickten Person ins Menü mit quittierbarer Meldung. Entwickler: `npm run test:themes -- /absoluter/Pfad/Kegel-Krach.html`.
+
+## Weiterhin enthalten: Änderungen aus 1.5
 
 - Die ursprünglichen Kegel, Figurenzeichnung, Beschriftungen und Kamera sind wieder aktiv. Das Plugin ersetzt die Zeichenfunktionen nicht mehr.
 - Gewürfelt wird auf Handy und Computer wieder durch Antippen des großen animierten Würfels. Er ist zusätzlich per Enter oder Leertaste bedienbar.
