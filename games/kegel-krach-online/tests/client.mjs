@@ -31,6 +31,10 @@ async function fetchMock(_, options) {
       room.members.push(member);
       result = { code: b.code, token: member.token, seq: room.events.length };
     } else if (b.op === 'poll') result = { events: room.events.filter(e => e.seq > b.after),status:status(room),removed:!room.members.some(p=>p.token===b.token) };
+    else if(b.op==='kick') {
+      room.members=room.members.filter(p=>p.uid!==b.uid);
+      result={ok:true,status:status(room)};
+    }
     else if(b.op==='leave') {
       const member=room.members.find(p=>p.token===b.token);
       room.members=room.members.filter(p=>p!==member);room.epoch++;
@@ -90,6 +94,12 @@ try {
   await until(() => A('L.length') === 2 && B('L.length') === 2, 'shared lobby');
   assert.equal(A('L[1].n'), 'Ben');
   console.log('PASS: two original game clients share private lobby and names');
+  const slot=a.window.document.querySelector('#lp .sl');
+  await sleep(70);
+  assert.equal(a.window.document.querySelector('#lp .sl'),slot);
+  assert.equal(b.window.document.querySelector('#lp button'),null);
+  assert.equal(a.window.document.querySelectorAll('#lp button').length,1);
+  console.log('PASS: unchanged polling preserves lobby DOM; kick button only visible to admin');
   await A("document.querySelector('#bSt').onclick()");
   await until(() => B('G !== null'), 'guest game start');
   assert.equal(A('JSON.stringify(G)'), B('JSON.stringify(G)'));
@@ -150,5 +160,10 @@ try {
     await until(() => c.window.eval('L.length') === 2, 'quick join');
     assert.equal(c.window.eval('R.code'), A('R.code'));
     console.log('PASS: quick play finds and joins a real open room');
+    await until(()=>a.window.document.querySelector('#lp button'),'kick button');
+    await a.window.document.querySelector('#lp button').onclick();
+    assert.equal(A('L.length'),1);
+    assert.equal(rooms.get(A('R.code')).members.length,1);
+    console.log('PASS: admin kick removes guest from displayed and server lobby');
   } finally { c.window.close(); }
 } finally { a.window.close(); b.window.close(); }

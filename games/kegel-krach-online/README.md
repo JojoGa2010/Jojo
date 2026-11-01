@@ -1,8 +1,14 @@
 # Kegel-Krach Online für WordPress
 
-## Update auf Version 1.1
+## Update auf Version 1.2
 
 Die neue ZIP-Datei über **Plugins → Neues Plugin hinzufügen → Plugin hochladen** hochladen. WordPress zeigt die vorhandene Version an: **Aktuelles durch hochgeladenes ersetzen** wählen. Danach den WP-Rocket-Cache leeren und die Spielseite auf allen Geräten neu laden. Bestehende Partien vor dem Update beenden. Der Elementor-Spielcode bleibt unverändert.
+
+## Neu in Version 1.2
+
+Die wartende Lobby wird nur bei geänderter Mitgliedschaft oder Admin-Rolle neu aufgebaut. Leere Plätze pulsieren nicht mehr. Dadurch bleiben Anzeige und Knöpfe während des Wartens stabil.
+
+Der Admin sieht bei anderen Spielern **Aus Lobby entfernen**. Dies funktioniert in privaten und offenen Lobbys vor dem Spielstart. Der Platz wird sofort frei und die entfernte Sitzung erhält die Meldung **„Der Admin hat dich aus der Lobby entfernt.“**. Gäste können niemanden entfernen; der Admin kann sich über **Zurück** selbst abmelden. Ein Kick ist kein dauerhafter Identitäts-Bann: Die Person kann erneut mit dem Code beitreten.
 
 ## Installation auf digitalwohnen.at
 

@@ -19,6 +19,34 @@
     if (!config || !config.api) return;
     let joining = false;
     let listing = false;
+    let lobbySignature = null;
+    const originalDrawLobby = drawL;
+    drawL = function () {
+      const signature = JSON.stringify([L, isHost, pubRoomFlag]);
+      if (signature === lobbySignature) return;
+      lobbySignature = signature;
+      originalDrawLobby();
+      if (!isHost) return;
+      const slots = document.querySelectorAll('#lp .sl');
+      L.forEach((person, index) => {
+        if (person.uid === me.uid || !slots[index]) return;
+        const button = document.createElement('button');
+        button.className = 'g'; button.textContent = 'Aus Lobby entfernen';
+        button.setAttribute('aria-label', person.n + ' aus Lobby entfernen');
+        button.onclick = async () => {
+          const connection = R;
+          if (!connection || connection.closed || !isHost || G) return;
+          button.disabled = true;
+          try {
+            await connection.queue;
+            const result = await api({ op: 'kick', code: connection.code, token: connection.token, uid: person.uid });
+            applyStatus(connection, result.status);
+          } catch (error) { document.querySelector('#lw').textContent = error.message; }
+          finally { button.disabled = false; }
+        };
+        slots[index].append(button);
+      });
+    };
     let lastInput = Date.now();
     for (const name of ['pointerdown', 'pointermove', 'keydown', 'touchstart']) {
       document.addEventListener(name, event => { if (event.isTrusted) lastInput = Date.now(); }, { passive: true });
@@ -41,7 +69,7 @@
     panel.append(title, explanation, yes, no, exit); transfer.append(panel); document.body.append(transfer);
     // Explicitly override Elementor styles while preserving the hidden attribute.
     const style = document.createElement('style');
-    style.textContent = '#kk-admin-dialog[hidden],#kk-admin-dialog button[hidden]{display:none!important}';
+    style.textContent = '#kk-admin-dialog[hidden],#kk-admin-dialog button[hidden]{display:none!important}#lobby .sl.em{animation:none!important}';
     document.head.append(style);
 
     async function leaveLobby() {
@@ -75,6 +103,7 @@
 
     function applyStatus(connection, status) {
       if (!status || connection.closed || R !== connection) return;
+      connection.hasStatus = true;
       const changed = status.epoch !== connection.epoch;
       connection.epoch = status.epoch;
       connection.paused = !status.host_uid;
@@ -214,6 +243,8 @@
     wire = function () {
       const connection = R;
       connection.on('lobby', message => {
+        // Poll status is newer than historical lobby events in the same batch.
+        if (connection.hasStatus) return;
         if (G || !message.data || !message.data.L) return;
         L = message.data.L;
         pubRoomFlag = !!message.data.pub;
@@ -246,7 +277,9 @@
 
     function player() { return { uid: me.uid, n: me.n, skin: me.skin }; }
     function resetConnection() {
+      lobbySignature = null;
       if (R && R.close) R.close();
+      G = null; H = null; hl = []; busy = false; stamp++;
       transfer.hidden = true;
       lastInput = Date.now();
       clearInterval(hi);

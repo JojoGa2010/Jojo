@@ -90,3 +90,13 @@ $lg=call_api(['op'=>'join','code'=>$leave['code'],'uid'=>'leaveguest','n'=>'Gues
 call_api(['op'=>'leave','code'=>$lg['code'],'token'=>$lg['token']]);
 ok(count(poll_room($leave)->data['status']['L'])===1,'back removes guest from lobby');
 ok(poll_room($lg) instanceof WP_Error,'left guest session is revoked');
+$kh=call_api(['op'=>'create','uid'=>'kickhost','n'=>'Admin'])->data;
+$kg=call_api(['op'=>'join','code'=>$kh['code'],'uid'=>'kickguest','n'=>'Guest'])->data;
+$unauthorized=call_api(['op'=>'kick','code'=>$kg['code'],'token'=>$kg['token'],'uid'=>'kickhost']);
+ok($unauthorized instanceof WP_Error && $unauthorized->data['status']===403,'guest cannot kick admin');
+ok(call_api(['op'=>'kick','code'=>$kh['code'],'token'=>$kh['token'],'uid'=>'kickhost']) instanceof WP_Error,'admin cannot kick self');
+$kicked=call_api(['op'=>'kick','code'=>$kh['code'],'token'=>$kh['token'],'uid'=>'kickguest']);
+ok(count($kicked->data['status']['L'])===1,'admin kick frees lobby slot');
+$removed=poll_room($kg);
+ok($removed instanceof WP_Error && str_contains($removed->message,'entfernt'),'kicked session revoked with clear explanation');
+ok(call_api(['op'=>'kick','code'=>$guest['code'],'token'=>$guest['token'],'uid'=>'host01']) instanceof WP_Error,'kick rejected after game starts');

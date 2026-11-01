@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kegel-Krach Online
  * Description: Verbindet das bestehende Kegel-Krach-HTML-Spiel mit privaten und offenen WordPress-Lobbys.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Requires PHP: 7.4
  * Author: Digitalwohnen
  */
@@ -32,7 +32,7 @@ final class KK_Online {
         // Loading on all public pages also supports Elementor HTML widgets and changed slugs.
         // The client does nothing unless the original Kegel-Krach game is present.
         echo '<script data-nowprocket="" data-cfasync="false">window.KKOnlineConfig=' . wp_json_encode(array('api' => rest_url('kegel-krach/v1/')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
-        echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/online.js', __FILE__)) . '?ver=1.1.0"></script>';
+        echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/online.js', __FILE__)) . '?ver=1.2.0"></script>';
     }
     public static function routes() {
         register_rest_route('kegel-krach/v1', '/rooms', array(
@@ -155,7 +155,10 @@ final class KK_Online {
                 $index = -1;
                 $hash = hash('sha256', (string) ($body['token'] ?? ''));
                 foreach ($room['members'] as $i => $p) { if (hash_equals($p['hash'], $hash)) { $index = $i; break; } }
-                if ($index < 0) { return self::fail('Keine gültige Verbindung zur Lobby.', 403); }
+                if ($index < 0) {
+                    if (in_array($hash, $room['kicked'] ?? array(), true)) { return self::fail('Der Admin hat dich aus der Lobby entfernt.', 403); }
+                    return self::fail('Keine gültige Verbindung zur Lobby.', 403);
+                }
                 $p = $room['members'][$index];
                 $room['members'][$index]['seen'] = $now;
                 if ($room['host_uid'] && ($room['host_seen'] <= $now - 60 || $room['host_active'] <= $now - 60)) { self::election($room, $now); }
@@ -172,6 +175,18 @@ final class KK_Online {
                     if ($room['events'] && $after < $room['events'][0]['seq'] - 1) { return self::fail('Die Verbindung war zu lange unterbrochen. Bitte eine neue Partie starten.', 409); }
                     $events = array_values(array_filter($room['events'], function ($e) use ($after) { return $e['seq'] > $after; }));
                     $reply = array('events' => $events, 'status' => self::status($room), 'removed' => !in_array($p['uid'], array_column($room['members'], 'uid'), true));
+                } elseif ($op === 'kick') {
+                    if (!$host) { return self::fail('Nur der Admin darf Spieler entfernen.', 403); }
+                    if ($room['started']) { return self::fail('Spieler können nur vor dem Spielstart entfernt werden.', 409); }
+                    $target = (string) ($body['uid'] ?? '');
+                    if ($target === $p['uid']) { return self::fail('Benutze Zurück, um die Lobby selbst zu verlassen.'); }
+                    $found = false;
+                    foreach ($room['members'] as $person) {
+                        if ($person['uid'] === $target) { $found = true; $room['kicked'][] = $person['hash']; break; }
+                    }
+                    if (!$found) { return self::fail('Dieser Spieler ist nicht mehr in der Lobby.', 404); }
+                    self::remove_player($room, $target);
+                    $reply = array('ok' => true, 'status' => self::status($room));
                 } elseif ($op === 'leave') {
                     if ($host) { self::election($room, $now); }
                     else { self::remove_player($room, $p['uid']); $room['epoch']++; }
