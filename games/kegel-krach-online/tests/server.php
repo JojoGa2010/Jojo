@@ -59,9 +59,9 @@ ok($last['data']['u']==='guest01' && $last['data']['n']==='Ben','chat identity c
 ok(send_event($guest,'chat',['t'=>'spam']) instanceof WP_Error,'rapid repeated chat rejected');
 $private=call_api(['op'=>'create','uid'=>'other01','n'=>'Private'])->data;
 ok(count(call_api(['op'=>'list'])->data['rooms'])===0,'private room excluded from public list');
-for($i=0;$i<5;$i++)call_api(['op'=>'join','code'=>$private['code'],'uid'=>'person'.$i,'n'=>'P','skin'=>4+$i]);
+for($i=0;$i<5;$i++)call_api(['op'=>'join','code'=>$private['code'],'uid'=>'person'.$i,'n'=>'P','skin'=>25+$i]);
 ok(count(poll_room($private)->data['status']['L'])===6,'six players fit in lobby');
-ok(poll_room($private)->data['status']['L'][5]['skin']===8,'additional skin stored for guest');
+ok(poll_room($private)->data['status']['L'][5]['skin']===29,'additional skin stored for guest');
 ok(call_api(['op'=>'join','code'=>$private['code'],'uid'=>'overflow','n'=>'P']) instanceof WP_Error,'seventh player rejected');
 $sixPlayers=array_map(fn($p)=>['uid'=>$p['uid'],'n'=>$p['n'],'skin'=>$p['skin']],poll_room($private)->data['status']['L']);
 ok(!(send_event($private,'game',['G'=>['pl'=>$sixPlayers]]) instanceof WP_Error),'six-member game accepted');

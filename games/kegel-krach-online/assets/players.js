@@ -1,4 +1,4 @@
-/* Six seats, ten classic-style skins; original 2–4-player board is preserved. */
+/* Six seats, thirty classic-style skins; original 2–4-player board is preserved. */
 (() => {
   let tries=0;
   const timer=setInterval(()=>{
@@ -10,6 +10,34 @@
     document.documentElement.dataset.kkPlayers='6';
     COL.push('#9b6dff','#ff9b35');CN.push('Lila','Orange');
     SKN.push('Pilot','Wikinger','Pirat','Zauberer','Ninja','Astronaut');
+    SKN.push('Feuerwehr','Polizei','Koch','Cowboy','Ritter','Doktor','Detektiv','Gärtner','Kapitän','Rennfahrer','Musiker','Maler','Samurai','Roboter','Taucher','Pharao','Punk','Elf','Biene','Bergsteiger');
+    function extraAccessory(ctx,skin){
+      const path=(points,fill)=>{ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.stroke();};
+      const oval=(x,y,rx,ry,fill)=>{ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,7);ctx.fillStyle=fill;ctx.fill();ctx.stroke();};
+      const rect=(x,y,w,h,fill)=>{ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);ctx.strokeRect(x,y,w,h);};
+      switch(skin){
+        case 10:oval(0,-53,11,9,'#c83436');rect(-14,-51,28,3,'#252b3e');rect(-2,-65,4,12,'#ffd26e');break;
+        case 11:path([[-10,-53],[-12,-62],[0,-66],[12,-62],[10,-53]],'#243c6b');rect(-12,-53,24,3,'#18233b');oval(0,-59,3,3,'#edca69');break;
+        case 12:rect(-9,-66,18,14,'#fff');oval(-8,-68,7,6,'#fff');oval(0,-70,7,7,'#fff');oval(8,-68,7,6,'#fff');rect(-9,-56,18,4,'#e3e8ed');break;
+        case 13:oval(0,-52,17,4,'#805737');path([[-10,-53],[-8,-66],[-2,-63],[6,-67],[10,-53]],'#9e7349');rect(-10,-56,20,3,'#4d352b');break;
+        case 14:oval(0,-50,11,13,'#a5b4c4');rect(-9,-48,18,5,'#344050');rect(-1,-61,3,20,'#e2e9ef');break;
+        case 15:rect(-10,-61,20,9,'#fff');ctx.fillStyle='#cf4353';ctx.fillRect(-2,-59,4,6);ctx.fillRect(-4,-57,8,2);oval(0,-18,5,5,'#d7e4e9');break;
+        case 16:path([[-10,-53],[-8,-64],[7,-66],[10,-53]],'#b09365');oval(0,-52,16,3,'#b09365');rect(-9,-56,18,3,'#654735');oval(4,-44,4,4,'#bde0ec66');break;
+        case 17:oval(0,-57,10,7,'#80a557');oval(0,-52,17,3,'#b5c881');oval(6,-58,3,3,'#e4a2bd');break;
+        case 18:oval(0,-58,12,7,'#f3f4ed');rect(-10,-55,20,4,'#263c63');oval(0,-58,2,3,'#e5bf66');rect(-13,-51,26,2,'#263c63');break;
+        case 19:oval(0,-49,12,15,'#c74d4a');rect(-10,-50,20,8,'#aee1f1');for(let i=0;i<4;i++)rect(-8+i*4,-61,4,3,i%2?'#fff':'#26323d');break;
+        case 20:ctx.beginPath();ctx.arc(0,-45,11,Math.PI,0);ctx.lineWidth=4;ctx.stroke();rect(-13,-46,5,10,'#d5ac58');rect(8,-46,5,10,'#d5ac58');ctx.lineWidth=1.5;oval(-2,-14,3,2,'#f3d575');rect(0,-22,2,8,'#f3d575');break;
+        case 21:oval(-2,-58,13,6,'#35779c');rect(-2,-66,3,4,'#243c63');path([[9,-53],[15,-67],[17,-66],[12,-51]],'#c8a56b');oval(16,-68,2,4,'#dc7375');break;
+        case 22:oval(0,-53,11,10,'#a63e4b');path([[-10,-55],[-17,-68],[-12,-59],[0,-65],[12,-59],[17,-68],[10,-55]],'#e5bd65');rect(-12,-51,24,3,'#5c2e41');break;
+        case 23:rect(-11,-59,22,21,'#a5b5c6');rect(-8,-52,16,6,'#26394b');ctx.fillStyle='#8ee7d0';ctx.fillRect(-6,-50,4,2);ctx.fillRect(2,-50,4,2);rect(-1,-67,2,8,'#687d94');oval(0,-68,3,3,'#e78f83');break;
+        case 24:oval(0,-44,12,8,'#293b4b');oval(-5,-44,5,5,'#8edce8');oval(5,-44,5,5,'#8edce8');ctx.strokeStyle='#e6bc53';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(9,-39);ctx.lineTo(14,-39);ctx.lineTo(14,-61);ctx.stroke();break;
+        case 25:rect(-10,-63,20,10,'#e4bd60');path([[-10,-55],[-7,-52],[-9,-34],[-15,-34]],'#e4bd60');path([[10,-55],[7,-52],[9,-34],[15,-34]],'#e4bd60');ctx.strokeStyle='#2d5790';for(let y=-59;y<-51;y+=4){ctx.beginPath();ctx.moveTo(-9,y);ctx.lineTo(9,y);ctx.stroke();}break;
+        case 26:path([[-7,-53],[-6,-65],[-2,-63],[0,-75],[3,-64],[7,-67],[7,-53]],'#d55a9d');oval(-9,-41,2,2,'#f2d775');oval(9,-41,2,2,'#f2d775');break;
+        case 27:path([[-10,-52],[0,-74],[12,-66],[4,-69],[10,-52]],'#467b58');rect(-10,-54,20,3,'#d36a74');oval(12,-66,3,3,'#f3e4bd');break;
+        case 28:ctx.strokeStyle='#2b3245';ctx.lineWidth=2;for(const sign of [-1,1]){ctx.beginPath();ctx.moveTo(sign*5,-51);ctx.lineTo(sign*9,-64);ctx.stroke();oval(sign*9,-65,3,3,'#e8bd56');}rect(-7,-37,14,3,'#e9c45d');break;
+        case 29:oval(0,-56,10,9,'#ce784e');rect(-10,-54,20,4,'#8c4f38');oval(0,-56,4,4,'#fff0a3');ctx.strokeStyle='#eacb87';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,-20,7,0,Math.PI*1.5);ctx.stroke();break;
+      }
+    }
     BN.push('Kegel-Klara','Krach-Kurt');
     const oldPin=pin;
     pin=function(ctx,x,y,scale,color,skin,options={}){
@@ -34,21 +62,21 @@
       }else if(skin===8){
         ctx.fillStyle='#232b3e';ctx.beginPath();ctx.ellipse(0,-48,9,5,0,0,7);ctx.fill();
         ctx.fillRect(-8,-41,16,8);ctx.strokeStyle='#e65b69';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(7,-48);ctx.lineTo(17,-44);ctx.lineTo(11,-42);ctx.stroke();
-      }else{
+      }else if(skin===9){
         ctx.fillStyle='#e8edf6';ctx.beginPath();ctx.arc(0,-48,12,Math.PI,0);ctx.lineTo(11,-38);ctx.lineTo(-11,-38);ctx.closePath();ctx.fill();ctx.stroke();
         ctx.fillStyle='#9fd6ef99';ctx.beginPath();ctx.ellipse(0,-44,9,7,0,0,7);ctx.fill();ctx.stroke();
         ctx.fillStyle='#fff';ctx.fillRect(-6,-56,5,2);
-      }
+      }else extraAccessory(ctx,skin);
       ctx.restore();
     };
-    for(let i=4;i<10;i++){
+    for(let i=4;i<SKN.length;i++){
       const button=document.createElement('button');button.className='sk';
       const canvas=document.createElement('canvas');canvas.width=120;canvas.height=140;
       button.append(canvas,document.createTextNode(SKN[i]));
       button.onclick=()=>{me.skin=i;try{localStorage.setItem('kk_s',i);}catch(_) {}};
       sks.append(button);
     }
-    me.skin=Math.max(0,Math.min(9,me.skin));
+    me.skin=Math.max(0,Math.min(SKN.length-1,me.skin));
     for(let i=4;i<=5;i++){const option=document.createElement('option');option.value=i;option.textContent=i+' Bots';document.querySelector('#nb').append(option);}
     const fillCount=document.createElement('select');fillCount.id='kk-fill-count';fillCount.setAttribute('aria-label','Mit Bots auf diese Spielerzahl auffüllen');
     for(let i=2;i<=6;i++){const option=document.createElement('option');option.value=i;option.textContent='Auf '+i+' Spieler auffüllen';option.selected=i===4;fillCount.append(option);}
@@ -77,7 +105,7 @@
       if(value<60)return circle(280,angle(s)+value*Math.PI/30);
       return circle(244-(value-60)*30,angle(s));
     }
-    window.KKBoard={position,six,skinHeights:[52,62,76,64,64,67,65,78,56,68],skinWidths:[1,1.3,.8,1.05,1,1,1,1,1,1]};
+    window.KKBoard={position,six,skinHeights:[52,62,76,64,64,67,65,78,56,68,68,68,80,69,65,63,69,65,67,66,58,74,70,72,64,66,77,77,70,67],skinWidths:[1,1.3,.8,1.05,...Array(26).fill(1)]};
     const mkOld=mk,legalOld=legal,moveOld=doMove,botOld=botPick,boardOld=board,piecesOld=pieces,bubblesOld=bubbles,playOld=play,diceOld=dice;
     mk=function(players){
       if(players.length<2||players.length>6)throw new Error('Zwei bis sechs Spieler erforderlich.');
@@ -87,7 +115,7 @@
     document.querySelector('#bBot').onclick=()=>{
       names();isHost=true;if(R&&R.close)R.close();R=null;
       const players=[{n:me.n,skin:me.skin,uid:'L'}];
-      for(let i=0;i<Number(document.querySelector('#nb').value);i++)players.push({n:BN[i],skin:rnd(10),bot:1,uid:'B'+i});
+      for(let i=0;i<Number(document.querySelector('#nb').value);i++)players.push({n:BN[i],skin:rnd(SKN.length),bot:1,uid:'B'+i});
       beginGame(mk(players));
     };
     legal=function(state,k,d){

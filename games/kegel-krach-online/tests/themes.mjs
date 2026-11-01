@@ -37,6 +37,7 @@ runInContext(themeSource,holidayDom.getInternalVMContext());await new Promise(r=
 const api=h.KKSeasonal;
 assert.equal(api.easter(2026).getMonth(),3);assert.equal(api.easter(2026).getDate(),5);
 assert.equal(api.easter(2027).getMonth(),2);assert.equal(api.easter(2027).getDate(),28);
+assert.equal(api.holidayForDate(new Date(2026,10,1)),null);assert.equal(api.holidayForDate(new Date(2026,10,2)),null);
 assert.equal(api.holidayForDate(new Date(2026,11,23)),null);
 assert.equal(api.holidayForDate(new Date(2026,11,24)).id,'christmas-eve');
 assert.equal(api.holidayForDate(new Date(2026,11,25)).id,'christmas');
@@ -51,4 +52,4 @@ assert.equal(h.document.documentElement.dataset.kkHoliday,'');assert.equal(h.doc
 assert.equal(h.document.querySelector('#kk-holiday-decoration').textContent,'');
 assert.equal(h.document.querySelector('#kk-month-label'),null);
 holidayDom.window.close();
-console.log('PASS: Easter dates verified, Christmas extras last only their own day, annual variants change and decorations clear after day change');
+console.log('PASS: no early-November candles; Easter dates verified, Christmas extras last only their own day, annual variants change and decorations clear after day change');

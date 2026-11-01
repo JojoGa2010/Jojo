@@ -1,7 +1,7 @@
 {
   "name": "kegel-krach-online",
   "private": true,
-  "version": "1.7.0",
+  "version": "1.8.0",
   "type": "module",
   "scripts": {
     "check": "node --check assets/online.js && node --check assets/visuals.js && node --check assets/controls.js && node --check assets/themes.js && node --check assets/players.js",

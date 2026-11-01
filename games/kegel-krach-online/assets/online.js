@@ -386,7 +386,7 @@
       if (!isHost || !R || button.disabled) return;
       const players = L.map(p => ({ ...p }));
       if (document.querySelector('#fill').checked) {
-        while (players.length < Math.max(L.length, Number(document.querySelector('#kk-fill-count').value))) players.push({ n: BN[players.length - 1] || 'Bot', skin: rnd(10), bot: 1, uid: 'B' + players.length });
+        while (players.length < Math.max(L.length, Number(document.querySelector('#kk-fill-count').value))) players.push({ n: BN[players.length - 1] || 'Bot', skin: rnd(SKN.length), bot: 1, uid: 'B' + players.length });
       }
       if (players.length < 2) { document.querySelector('#lw').textContent = 'Mindestens zwei Spieler: Bots aktivieren oder auf Freunde warten.'; return; }
       button.disabled = true;

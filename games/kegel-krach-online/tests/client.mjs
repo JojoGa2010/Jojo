@@ -193,7 +193,7 @@ try {
     try{
       await until(()=>group.every(d=>d.window.document.documentElement.dataset.kkOnline),'six adapters');
       for(let i=0;i<6;i++){
-        group[i].window.eval('me.skin='+(i+4));
+        group[i].window.eval('me.skin='+(i+24));
         let time=0;Object.defineProperty(group[i].window.performance,'now',{value:()=>{time+=250;return time;}});
         group[i].window.requestAnimationFrame=f=>group[i].window.setTimeout(f,0);
       }
@@ -201,7 +201,7 @@ try {
       for(let i=1;i<6;i++)await group[i].window.eval('joinCode('+JSON.stringify(code)+')');
       await until(()=>group.every(d=>d.window.eval('L.length')===6),'six members');
       assert.equal(group[0].window.document.querySelectorAll('#lp .sl').length,6);
-      assert.equal(group[0].window.document.querySelectorAll('#sks .sk').length,10);
+      assert.equal(group[0].window.document.querySelectorAll('#sks .sk').length,30);
       await group[0].window.document.querySelector('#bSt').onclick();
       await until(()=>group.every(d=>d.window.eval('G && G.pl.length===6')),'six game start');
       for(let k=0;k<6;k++){
@@ -215,7 +215,7 @@ try {
       }
       const state=group[0].window.eval('JSON.stringify(G)');
       for(const d of group)assert.equal(d.window.eval('JSON.stringify(G)'),state);
-      console.log('PASS: six connected clients with skins 4–9 start, roll and move in turn; snapshots identical');
+      console.log('PASS: six connected clients with skins 24–29 start, roll and move in turn; snapshots identical');
     }finally{for(const d of group)d.window.close();}
   }
   if(mobileMode){

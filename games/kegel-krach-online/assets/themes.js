@@ -30,7 +30,7 @@
   }
   function holidayForDate(date){
     const key=(date.getMonth()+1)+'-'+date.getDate(),year=date.getFullYear();
-    const fixed={'1-1':['new-year','firework','✦'],'1-6':['epiphany','crown','♛'],'2-14':['valentine','heart','♥'],'5-1':['may-day','flower','❀'],'10-26':['austria','flag','✧'],'10-31':['halloween','pumpkin','✦'],'11-1':['all-saints','candle','✧'],'11-2':['all-souls','candle','·'],'12-6':['saint-nicholas','gift','★'],'12-24':['christmas-eve','star','★'],'12-25':['christmas','tree','✧'],'12-26':['boxing-day','gift','✦'],'12-31':['new-years-eve','firework','✧']};
+    const fixed={'1-1':['new-year','firework','✦'],'1-6':['epiphany','crown','♛'],'2-14':['valentine','heart','♥'],'5-1':['may-day','flower','❀'],'10-26':['austria','flag','✧'],'10-31':['halloween','pumpkin','✦'],'12-6':['saint-nicholas','gift','★'],'12-24':['christmas-eve','star','★'],'12-25':['christmas','tree','✧'],'12-26':['boxing-day','gift','✦'],'12-31':['new-years-eve','firework','✧']};
     let value=fixed[key];
     for(const [offset,id,kind,glyph] of [[0,'easter','egg','✿'],[1,'easter-monday','bunny','❀'],[49,'pentecost','flower','✧'],[50,'pentecost-monday','star','✦']]){
       const day=easter(year);day.setDate(day.getDate()+offset);
@@ -58,6 +58,8 @@
   }
   window.KKSeasonal={themeForDate,holidayForDate,easter};
   if(!document.querySelector('#home #bMk'))return;
+  const initialWeather=themeForDate(new Date()).weather;
+  document.querySelectorAll('body>.fl').forEach((particle,i)=>{particle.textContent=initialWeather.icons[i%initialWeather.icons.length];});
   let tries=0;
   const ready=setInterval(()=>{
     if(typeof TH==='undefined'||typeof TL==='undefined'){if(++tries>600)clearInterval(ready);return;}

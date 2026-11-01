@@ -1,97 +1,58 @@
-# Kegel-Krach Online 1.7 für WordPress
+# Kegel-Krach Online 1.8 für WordPress
 
 ## Update installieren
 
-1. **Kegel-Krach-Online-v1.7.zip** herunterladen und nicht entpacken.
+1. **Kegel-Krach-Online-v1.8.zip** herunterladen und nicht entpacken.
 2. WordPress: **Plugins → Neues Plugin hinzufügen → Plugin hochladen**.
 3. ZIP auswählen und **Aktuelles durch hochgeladenes ersetzen** bestätigen.
 4. Falls nötig Plugin aktivieren, **WP-Rocket-Cache leeren** und die Spielseite auf allen Geräten neu laden.
 
 Den bestehenden Spielcode in Elementor stehen lassen. Laufende Partien vor dem Update beenden.
 
-## Neu in Version 1.7
+## Neu in 1.8
 
-- Das Logo führt zur **Start-Lobby des Spiels** (`/spiel/`), auch aus einer laufenden Partie. Eine Online-Lobby wird vorher nach Möglichkeit verlassen. Es erfolgt keine Navigation mehr auf die allgemeine Website-Homepage.
-- Die sichtbare Monats-/Designbeschriftung ist entfernt. Auch der Browser-Titel lautet nur **Kegel-Krach**. Die Monatsgestaltung und saisonalen Partikel bleiben erhalten.
-- Bis zu **sechs Spieler** sind möglich. Zwei bis vier Spieler behalten das ursprüngliche Brett. Für fünf oder sechs Spieler gibt es eine Anordnung mit sechs Startbereichen im gleichen Holz-, Farb- und Kegelstil, einer gemeinsamen Runde mit 60 Feldern und je vier Zielfeldern. Jeder Spieler behält vier Kegel. Lila und Orange ergänzen die Teamfarben.
-- Die Lobby zeigt sechs Plätze. Der Admin kann Bots auf insgesamt zwei bis sechs Spieler auffüllen lassen; die Voreinstellung bleibt vier. Solo sind bis zu fünf Bots möglich.
-- Es gibt **zehn Skins**: Klassik, Tonne, Spitzi, Boss, Pilot, Wikinger, Pirat, Zauberer, Ninja und Astronaut. Die ursprünglichen vier Skins sind pixelgenau unverändert. Alle Skins stehen in privaten, offenen und Bot-Partien zur Verfügung.
+Die Kerzen am 1./2. November stammten vom Allerheiligen-/Allerseelen-Extra. Diese beiden Extras sind entfernt. Auch die ursprünglichen Partikel werden beim Laden unmittelbar auf die saisonalen Elemente gesetzt, sodass keine November-Kerzen übernommen werden.
 
-### Extras an besonderen Tagen
+Es gibt **20 zusätzliche Skins, insgesamt 30**. Neu sind Feuerwehr, Polizei, Koch, Cowboy, Ritter, Doktor, Detektiv, Gärtner, Kapitän, Rennfahrer, Musiker, Maler, Samurai, Roboter, Taucher, Pharao, Punk, Elf, Biene und Bergsteiger.
 
-Das Monatsdesign wird an ausgewählten besonderen Tagen um rein grafische Details ergänzt, ohne den Tag oder das Design auszuschreiben. Jede Ergänzung gilt nur am jeweiligen lokalen Kalendertag. Um Mitternacht beziehungsweise bei Rückkehr in den Browser werden die Extras aktualisiert oder entfernt. Die Farb-/Drehvarianten unterscheiden sich nach Tag und Jahr; es gibt drei wechselnde Varianten.
+Klassik, Tonne, Spitzi, Boss, Pilot, Wikinger, Pirat, Zauberer, Ninja und Astronaut bleiben erhalten. Die ursprünglichen vier Skins sind pixelgenau unverändert. Neue Skins funktionieren in privaten, öffentlichen und Bot-Partien; die Auswahl wird lokal gespeichert. Auch Bots können alle 30 Skins verwenden. Die Teamfarbe bleibt unabhängig vom Skin erkennbar.
 
-Enthalten sind Neujahr, Dreikönigstag, Valentinstag, Ostersonntag/-montag, 1. Mai, Pfingstsonntag/-montag, österreichischer Nationalfeiertag, Halloween, Allerheiligen/Allerseelen, Nikolaus, Weihnachtsabend, Weihnachten, 26. Dezember und Silvester. Weihnachten erhält beispielsweise Tannen, der Weihnachtsabend Sterne und der Folgetag Geschenke. Die beweglichen Termine werden für den gregorianischen Kalender jährlich berechnet. Die übrigen saisonalen Partikel bleiben zum Großteil erhalten.
+## Spiel und Bedienung
 
-Für die Testdaten der Osterberechnung wurden die [Datumslisten des US Census Bureau](https://www.census.gov/data/software/x13as/genhol/easter-dates.html) herangezogen.
+- Zwei bis sechs Spieler mit je vier Kegeln. Für zwei bis vier bleibt das ursprüngliche Brett erhalten. Fünf/sechs verwenden sechs Startbereiche und eine gemeinsame 60-Felder-Runde im gleichen Holz-/Farbstil, mit vier Zielfeldern je Team. Lila und Orange ergänzen die ursprünglichen Teamfarben.
+- Solo sind bis zu fünf Bots möglich. In Online-Lobbys kann der Admin Bots auf insgesamt zwei bis sechs Spieler auffüllen lassen; Standard ist vier.
+- Gewürfelt wird am großen animierten Würfel, durch Antippen oder per Enter/Leertaste. Figuren werden direkt auf dem Brett angetippt, auch bei nur einem erlaubten Zug. Es gibt keine zusätzlichen Würfel-/Figurknöpfe. Zielfeld-Tipps und Wischbewegungen führen keinen Zug aus.
+- Eine kleine Stoppuhr läuft ab Spielbeginn, stoppt am Partieende und beginnt bei der nächsten Partie bei 00:00. Sie zeigt die lokale verstrichene Spielzeit inklusive Wartezeiten; keine Zugzeitbegrenzung.
+- Der Handy-Chat ist einklappbar. Das eigene SVG-Logo führt zur **Start-Lobby des Spiels** (`/spiel/`), auch aus einer laufenden Partie. Eine Online-Lobby wird nach Möglichkeit vorher verlassen; Verbindungsprobleme blockieren die Navigation höchstens 1,2 Sekunden.
 
-Zusätzliche Prüfungen: sechs getrennte Spielclients würfeln und bewegen nacheinander bei identischen Spielständen; Kapazität und Server-Spielstart für sechs Personen; Schlagen, Blockieren, exakte Zielfelder und Sieg; Antippen der neuen Skins; Rendering aller Skins und des Sechserbretts; Rückkehr zur Start-Lobby, fehlende Designbeschriftung und Ablauf der Festtags-Extras. Entwickler: `npm run test:players -- /absoluter/Pfad/Kegel-Krach.html /absoluter/Ausgabeordner`.
+## Lobbys und Admin
 
-## Weiterhin enthalten: Version 1.6
+Gerät A erstellt unter **Mit Freunden** eine private Lobby. Gerät B öffnet dieselbe Seite und tritt mit dem vierstelligen Code bei. Danach startet der Admin die Partie. Offene Spiele erscheinen unter **Online**; Schnellspiel tritt einer offenen Lobby bei oder erstellt eine neue.
 
-Ein Kick sperrt nicht nur die Sitzung auf dem Server: Die entfernte Person wird aus der Lobby-Ansicht ins Spielmenü zurückgeschickt. Dort steht dauerhaft **„Du wurdest vom Admin aus der Gruppe entfernt. Du bist nicht mehr in dieser Lobby.“** bis sie **Verstanden** wählt oder eine neue Lobby öffnet. Alte Nachrichten/Antworten einer bereits geschlossenen Verbindung verändern keine neu eröffnete Lobby.
+**Zurück** verlässt die wartende Lobby und führt ins Spielmenü. Vor dem Start kann der Admin andere Spieler entfernen. Die gekickte Person verliert ihren Zugriff, wird ins Spielmenü geschickt und erhält eine Meldung zum Bestätigen. Das ist kein dauerhafter Identitäts-Bann; ein erneuter Beitritt mit dem Code ist möglich.
 
-Jeder Monat erhält einen eigenen Hintergrund mit Muster, passende Menükarten, Akzentfarben, Dialogfarben und ein eigenes Brett-Farbschema. Die Teamfarben und ursprünglichen Kegel bleiben erhalten. Monat und Design werden nicht ausgeschrieben.
+Nach 60 Sekunden ohne menschliche Eingabe oder Verbindung verliert der Admin seine Rolle. Ein zufälliger verbundener Mitspieler erhält 20 Sekunden zur ausdrücklichen Übernahme. Bei Ablehnung oder Zeitablauf wird jemand anderes gefragt. Wenn niemand übernimmt, bleibt die Partie pausiert und jeder kann ins Menü zurückkehren. Bei Annahme wird der gespeicherte Stand übernommen; Figuren des ausgeschiedenen Admins werden Bots. Ein Neuladen stellt die eigene Sitzung nicht wieder her.
 
-| Monat | Gestaltung |
-| --- | --- |
-| Januar | Eiskristalle, Eisblau |
-| Februar | Violetter Winterabend |
-| März | Erstes Grün |
-| April | Kühler Frühlingsregen |
-| Mai | Blütenwiese |
-| Juni | Sommer am Wasser |
-| Juli | Warme Sonnentage |
-| August | Spätsommer in Terrakotta |
-| September | Erntezeit |
-| Oktober | Goldener Herbst |
-| November | Nebel und Kupfer |
-| Dezember | Festlicher Winter |
+## Monatsgestaltung und Festtags-Extras
 
-Die fallenden Elemente richten sich unabhängig davon nach der Jahreszeit: **Dezember–Februar Schnee/Eiskristalle**, **März–Mai Blüten**, **Juni–August goldene Licht-/Pollenpartikel**, **September–November Herbstblätter**. Während des Spiels sind sie dezenter und fangen keine Eingaben ab. Bei aktivierter Systemeinstellung für reduzierte Bewegung werden sie ausgeblendet.
+Jeder Monat besitzt eigene Hintergründe/Muster, Menükarten, Akzent-, Dialog- und Brettfarben. Monat oder Design werden nicht ausgeschrieben. Schnee im Winter, Blüten im Frühling, goldene Licht-/Pollenpartikel im Sommer und Blätter im Herbst bleiben dezent und fangen keine Eingaben ab. Bei reduzierter Bewegung werden sie ausgeblendet.
 
-Die Datumswahl verwendet den Kalender des Geräts. Ein offenes Spiel prüft jede Minute und bei Rückkehr zum Browser, ob ein neuer Monat begonnen hat. Es ist kein monatliches Plugin-Update erforderlich. Die Advent-Ausnahme des ursprünglichen HTML wird durch das echte Dezember-/Novemberdesign ersetzt.
+Grafische Extras gelten nur am jeweiligen lokalen Kalendertag. Enthalten sind Neujahr, Dreikönigstag, Valentinstag, Ostersonntag/-montag, 1. Mai, Pfingstsonntag/-montag, österreichischer Nationalfeiertag, Halloween, Nikolaus, Weihnachtsabend, Weihnachten, 26. Dezember und Silvester. Tages-/Jahresvarianten wechseln. Um Mitternacht und bei Rückkehr in den Browser werden die Extras aktualisiert oder entfernt. Die Monatsgestaltung bleibt dabei erhalten.
 
-Zusätzlich geprüft: alle zwölf unterschiedlichen Hintergrund- und Brett-Paletten, Jahreszeitengrenzen, unveränderte Figuren/Teamfarben und tatsächliche Rückkehr der gekickten Person ins Menü mit quittierbarer Meldung. Entwickler: `npm run test:themes -- /absoluter/Pfad/Kegel-Krach.html`.
+Ostern und Pfingsten werden für den gregorianischen Kalender jährlich berechnet. Testdaten: [US Census Bureau](https://www.census.gov/data/software/x13as/genhol/easter-dates.html). Es wird der Kalender des Geräts verwendet; kein jährliches Plugin-Update notwendig.
 
-## Weiterhin enthalten: Änderungen aus 1.5
+## Voraussetzungen und Grenzen
 
-- Die ursprünglichen Kegel, Figurenzeichnung, Beschriftungen und Kamera sind wieder aktiv. Das Plugin ersetzt die Zeichenfunktionen nicht mehr.
-- Gewürfelt wird auf Handy und Computer wieder durch Antippen des großen animierten Würfels. Er ist zusätzlich per Enter oder Leertaste bedienbar.
-- Die zusätzlichen Würfel- und Figurknöpfe wurden vollständig entfernt.
-- Eine Figur wird nur durch direktes Antippen auf dem Brett bewegt. Auch bei genau einem erlaubten Zug erfolgt keine automatische Bewegung. Ein Tippen auf ein leeres Zielfeld oder ein Wischen löst keinen Zug aus.
-- Eine kleine Stoppuhr neben der Zuganzeige läuft ab Spielbeginn, stoppt am Partieende und beginnt bei einer neuen Partie wieder bei 00:00. Sie zeigt die lokale verstrichene Spielzeit, inklusive Wartezeiten; es gibt keine Zugzeitbegrenzung.
-- Das Logo ist eine eigens gezeichnete SVG-Kegel-Marke ohne Emoji. Logo und Überschriften führen weiterhin zur Website-Startseite.
-- Der Handy-Chat bleibt einklappbar; das Brett nutzt den frei gewordenen Platz. Kleine Würfel der Mitspieler berücksichtigen den versetzten Handy-Spielbereich.
+PHP 7.4 oder neuer, eine InnoDB-Datenbank, die WordPress-REST-API und ein Theme mit `wp_footer` werden benötigt. Falls WP Rocket JavaScript verzögert, `kegel-krach-online` in die Ausnahmen aufnehmen. Sicherheitsplugins dürfen `/kegel-krach/v1/rooms` nicht blockieren.
 
-## Online spielen
+Regeln und Bots laufen weiterhin im Browser des Admins. Der Server authentifiziert Teilnehmer und bindet Aktionen/Chat an Sitzungsschlüssel. Nur der Admin kann Ergebnisse verteilen. Für Freizeitpartien, nicht für manipulationssichere Turniere oder Einsätze. Viele gleichzeitige Partien benötigen entsprechend leistungsfähiges Hosting, da die Synchronisierung etwa einmal pro Sekunde abfragt.
 
-Gerät A: **Mit Freunden → Namen eingeben → Private Lobby erstellen**. Gerät B öffnet dieselbe Seite und tritt mit dem vierstelligen Code bei. Sobald beide Namen angezeigt werden, startet der Admin die Partie. Freie Plätze lassen sich mit Bots füllen. **Online → Offenes Spiel erstellen** zeigt eine echte wartende Lobby in der öffentlichen Liste. **Schnellspiel** tritt einer offenen Lobby bei oder erstellt eine neue.
-
-**Zurück** verlässt die wartende Lobby und führt ins Spielmenü. Der Admin kann andere Spieler vor dem Spielstart über **Aus Lobby entfernen** kicken. Die Sitzung verliert ihren Zugriff; dies ist kein dauerhafter Identitäts-Bann und ein erneuter Beitritt mit dem Code ist möglich.
-
-## Admin-Wechsel
-
-Nach 60 Sekunden ohne menschliche Eingabe oder ohne Verbindung verliert der Admin seine Rolle. Ein zufälliger verbundener Mitspieler bekommt 20 Sekunden Zeit, ausdrücklich zu übernehmen. Ablehnung oder Zeitablauf fragt einen anderen verbundenen Spieler. Wenn niemand übernimmt, bleibt die Partie pausiert und jeder kann zum Menü zurückkehren.
-
-Bei Annahme wird der zuletzt auf dem Server gespeicherte Stand übernommen; Figuren des ausgeschiedenen Admins werden zu Bots. Der frühere Admin kann mit seiner alten Sitzung nicht mehr eingreifen. Ein Neuladen stellt die eigene Sitzung nicht wieder her.
-
-## Logo und Start-Lobby
-
-Das dauerhaft sichtbare Kegel-Krach-Logo, die Überschriften und der Admin-Dialog verlinken die Start-Lobby des Spiels (`/spiel/`). Auch reguläre WordPress-Logos werden auf allen Seiten auf diese Adresse gesetzt. Vor Navigation wird die Online-Lobby nach Möglichkeit verlassen; ein Verbindungsproblem blockiert die Navigation höchstens 1,2 Sekunden.
-
-## Voraussetzungen und Fehlerbehebung
-
-PHP 7.4 oder neuer, InnoDB-Datenbank, WordPress-REST-API und ein Theme mit `wp_footer` werden benötigt. Nach jedem Update den Cache leeren. Falls WP Rocket JavaScript verzögert, `kegel-krach-online` in die Ausnahmen aufnehmen. Eine Sicherheits-Erweiterung darf `/kegel-krach/v1/rooms` nicht blockieren.
-
-Spielregeln und Bots laufen weiterhin im Browser des Admins. Der WordPress-Server authentifiziert Teilnehmer, bindet Aktionen und Chat an Sitzungsschlüssel und erlaubt nur dem Admin, Ergebnisse zu verteilen. Das ist für private Freizeitpartien ausgelegt, nicht für manipulationssichere Turniere oder Einsätze.
-
-Die Synchronisierung fragt ungefähr einmal pro Sekunde ab. Viele gleichzeitige Partien benötigen entsprechend leistungsfähiges Hosting. Namen und Spielnachrichten liegen vorübergehend in einer eigenen Datenbanktabelle. Ein stündlicher WordPress-Cron-Lauf entfernt seit zwei Stunden inaktive Räume. Keine Übertragung an externe Spielserver.
+Namen und Spielnachrichten liegen vorübergehend in einer eigenen Datenbanktabelle. Ein stündlicher Cron-Lauf entfernt seit zwei Stunden inaktive Räume. Keine Übertragung an externe Spielserver.
 
 ## Prüfungen für Entwickler
 
-Node.js 24.18 oder neuer: `npm install`, `npm run check`, `npm run test:server`, `npm run test:client -- /absoluter/Pfad/Kegel-Krach.html`, `KK_MOBILE=1 npm run test:client -- /absoluter/Pfad/Kegel-Krach.html` und `npm run test:visuals -- /absoluter/Pfad/Kegel-Krach.html /absoluter/Ausgabeordner`.
+Node.js 24.18 oder neuer: `npm install`, `npm run check`, `npm run test:server`, `npm run test:client -- /absoluter/Pfad/Kegel-Krach.html`, `KK_MOBILE=1 npm run test:client -- /absoluter/Pfad/Kegel-Krach.html`, `npm run test:visuals -- /absoluter/Pfad/Kegel-Krach.html /absoluter/Ausgabeordner`, `npm run test:players -- /absoluter/Pfad/Kegel-Krach.html /absoluter/Ausgabeordner`, `npm run test:themes -- /absoluter/Pfad/Kegel-Krach.html`.
 
-Geprüft: Lobby, Start/Züge/Chat mit zwei getrennten Original-Spielclients, Rollenwechsel und Kick-Rechte, Rückkehr der ursprünglichen Zeichenfunktionen, direkter Figurtreffer statt Zielfeldtreffer, Wischschutz, Würfel-Klick, manuelle Einzelzüge, Stoppuhr Start/Stopp/Neustart, SVG-Logo und WordPress-Assets. Lokale Browser-Vorschauen ergänzen die automatischen Tests.
+Geprüft: 30 auswählbare/gerenderte Skins, direkter Treffer jeder neuen Figur, sechs getrennte Clients mit Skins 24–29 bei identischen Spielständen, Server-Speicherung bis Skin 29, Sechser-Regeln und ursprüngliche Skins, Uhr/Logo/Kick/Admin-Wechsel, alle Monats-/Festtagsgrenzen und fehlende November-Kerzen. Lokale Browser-Prüfung der Skin-Auswahl und November-Dekoration ergänzt die automatischen Tests.
 
-Nicht geprüft: tatsächliche InnoDB-Sperren, das Live-Hosting und echte Mobilgeräte/Bildschirmtastaturen. Nach Installation einen Test mit zwei Geräten durchführen.
+Nicht geprüft: das Live-Hosting, tatsächliche InnoDB-Sperren, echte Mobilgeräte und Bildschirmtastaturen. Nach Installation mit zwei Geräten testen.
