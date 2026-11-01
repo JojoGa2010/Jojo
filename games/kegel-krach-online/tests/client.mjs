@@ -8,6 +8,7 @@ if (!originalPath) throw new Error('Pass the original Kegel-Krach.html path as a
 const html = readFileSync(originalPath, 'utf8');
 const source = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 const adapter = readFileSync(new URL('../assets/online.js', import.meta.url), 'utf8');
+const mobileMode=process.env.KK_MOBILE==='1';
 const rooms = new Map();
 let number = 0;
 function status(room) {
@@ -76,11 +77,13 @@ function client(name) {
   w.HTMLCanvasElement.prototype.getContext = () => new Proxy({}, { get: (_, key) => key === 'measureText' ? () => ({ width: 50 }) : () => {} });
   w.fetch = fetchMock;
   w.AbortController = AbortController;
+  w.matchMedia=()=>({matches:mobileMode,addEventListener(){},removeEventListener(){}});
   w.KKOnlineConfig = { api: '/wp-json/kegel-krach/v1/' };
   w.eval(source);
   w.eval(readFileSync(new URL('../assets/visuals.js', import.meta.url), 'utf8'));
   w.eval("dice=async()=>{};ride=async()=>{};hop=async()=>{};kick=async()=>{};homeCam=async()=>{};");
   w.eval(adapter);
+  w.eval(readFileSync(new URL('../assets/controls.js',import.meta.url),'utf8'));
   w.document.querySelector('#nm').value = name;
   w.document.querySelector('#fill').checked = false;
   return dom;
@@ -105,10 +108,21 @@ try {
   await until(() => B('G !== null'), 'guest game start');
   assert.equal(A('JSON.stringify(G)'), B('JSON.stringify(G)'));
   console.log('PASS: both clients start with identical game state');
+  assert.equal(a.window.document.querySelector('#kk-home-logo').getAttribute('href'),'/');
+  assert.equal(a.window.document.querySelector('#home h1 a').getAttribute('href'),'/');
+  assert.equal(a.window.document.querySelector('#lobby h1 a').getAttribute('href'),'/');
+  console.log('PASS: persistent logo and screen headings link to website home');
   a.window.Math.random = () => .95;
-  A("act({t:'roll'})");
+  if(mobileMode){
+    await until(()=>!a.window.document.querySelector('#kk-roll').disabled,'mobile roll enabled');
+    assert.equal(a.window.document.querySelector('#dpop').classList.contains('on'),false);
+    a.window.document.querySelector('#kk-roll').click();
+  }else A("act({t:'roll'})");
   await until(() => A("!busy && G.phase==='move'") && B("G.phase==='move'"), 'host roll');
-  A("act({t:'move',i:0})");
+  if(mobileMode){
+    await until(()=>!a.window.document.querySelector('#kk-moves button').disabled,'mobile figure enabled');
+    a.window.document.querySelector('#kk-moves button').click();
+  }else A("act({t:'move',i:0})");
   await until(() => A('!busy && G.pc[0][0]===0') && B('G.pc[0][0]===0'), 'host piece enters board');
   a.window.Math.random = () => 0;
   A("act({t:'roll'})");
@@ -167,4 +181,28 @@ try {
     assert.equal(rooms.get(A('R.code')).members.length,1);
     console.log('PASS: admin kick removes guest from displayed and server lobby');
   } finally { c.window.close(); }
+  if(mobileMode){
+    const solo=client('Solo');
+    try{
+      await until(()=>solo.window.document.documentElement.dataset.kkControls,'mobile controls installed');
+      solo.window.eval("isHost=true;R=null;beginGame(mk([{n:'Solo',uid:'L',skin:0},{n:'Ben',uid:'other',skin:1}]))");
+      solo.window.Math.random=()=>.2;
+      const roll=solo.window.document.querySelector('#kk-roll');
+      await until(()=>!roll.disabled,'first retry roll');roll.click();
+      await until(()=>solo.window.eval('G.tries')===1,'first base retry');
+      await until(()=>!roll.disabled,'second retry roll');roll.click();
+      await until(()=>solo.window.eval('G.tries')===2,'second base retry');
+      await until(()=>!roll.disabled,'third retry available after identical die');
+      console.log('PASS: repeated identical rolls at home unlock controls correctly');
+      const toggle=solo.window.document.querySelector('#kk-chat-toggle');toggle.click();
+      assert.equal(toggle.getAttribute('aria-expanded'),'true');
+      toggle.click();assert.equal(toggle.getAttribute('aria-expanded'),'false');
+      console.log('PASS: mobile chat can open and close');
+    }finally{solo.window.close();}
+  }
 } finally { a.window.close(); b.window.close(); }
+const site=new JSDOM('<a class="custom-logo-link" href="/old"><img class="custom-logo"></a>',{url:'https://example.test/',runScripts:'outside-only'});
+site.window.KKOnlineConfig={home:'/start/'};
+site.window.eval(readFileSync(new URL('../assets/controls.js',import.meta.url),'utf8'));
+assert.equal(site.window.document.querySelector('a').getAttribute('href'),'/start/');
+site.window.close();console.log('PASS: website logo outside game also links to configured home');

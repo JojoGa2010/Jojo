@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kegel-Krach Online
  * Description: Verbindet das bestehende Kegel-Krach-HTML-Spiel mit privaten und offenen WordPress-Lobbys.
- * Version: 1.3.0
+ * Version: 1.4.0
  * Requires PHP: 7.4
  * Author: Digitalwohnen
  */
@@ -31,9 +31,11 @@ final class KK_Online {
     public static function assets() {
         // Loading on all public pages also supports Elementor HTML widgets and changed slugs.
         // The client does nothing unless the original Kegel-Krach game is present.
-        echo '<script data-nowprocket="" data-cfasync="false">window.KKOnlineConfig=' . wp_json_encode(array('api' => rest_url('kegel-krach/v1/')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
-        echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/visuals.js', __FILE__)) . '?ver=1.3.0"></script>';
-        echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/online.js', __FILE__)) . '?ver=1.3.0"></script>';
+        echo '<script data-nowprocket="" data-cfasync="false">window.KKOnlineConfig=' . wp_json_encode(array('api' => rest_url('kegel-krach/v1/'), 'home' => home_url('/')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
+        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=1.4.0">';
+        foreach (array('visuals.js','online.js','controls.js') as $file) {
+            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=1.4.0"></script>';
+        }
     }
     public static function routes() {
         register_rest_route('kegel-krach/v1', '/rooms', array(

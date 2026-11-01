@@ -62,11 +62,13 @@
     const panel = document.createElement('div');
     panel.style.cssText = 'background:#2d1b69;padding:24px;border-radius:20px;max-width:440px;display:grid;gap:16px;text-align:center';
     const title = document.createElement('strong'); title.textContent = 'Admin hat das Spiel verlassen';
+    const homeLink = document.createElement('a'); homeLink.href = config.home || '/'; homeLink.dataset.kkHome = '1';
+    homeLink.textContent = '🎳 Kegel-Krach · Startseite'; homeLink.style.cssText = 'color:#ffd60a;text-decoration:none;padding:10px';
     const explanation = document.createElement('p'); explanation.setAttribute('aria-live', 'polite');
     const yes = document.createElement('button'); yes.textContent = 'Ja, ich übernehme';
     const no = document.createElement('button'); no.className = 'g'; no.textContent = 'Nein, danke';
     const exit = document.createElement('button'); exit.className = 'g'; exit.textContent = '← Zurück zum Menü';
-    panel.append(title, explanation, yes, no, exit); transfer.append(panel); document.body.append(transfer);
+    panel.append(homeLink, title, explanation, yes, no, exit); transfer.append(panel); document.body.append(transfer);
     // Explicitly override Elementor styles while preserving the hidden attribute.
     const style = document.createElement('style');
     style.textContent = '#kk-admin-dialog[hidden],#kk-admin-dialog button[hidden]{display:none!important}#lobby .sl.em{animation:none!important}';
@@ -85,10 +87,12 @@
         R = null; H = null; G = null; L = []; hl = []; busy = false; isHost = false; stamp++;
         clearInterval(hi); clearInterval(pubT); clearInterval(olT);
         transfer.hidden = true; show('home'); document.querySelector('#bBk').onclick();
-      } catch (error) { document.querySelector('#lw').textContent = error.message; }
+        return true;
+      } catch (error) { document.querySelector('#lw').textContent = error.message; return false; }
       finally { back.disabled = false; }
     }
     back.onclick = leaveLobby; exit.onclick = leaveLobby;
+    window.KKOnlineLeave = leaveLobby;
     async function answer(accept) {
       if (!R) return;
       yes.disabled = no.disabled = true;
@@ -147,6 +151,7 @@
           method: 'POST',
           credentials: 'omit',
           cache: 'no-store',
+          keepalive: body.op === 'leave',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
           signal: abort.signal

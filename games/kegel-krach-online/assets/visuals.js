@@ -135,9 +135,9 @@
       const zoom=cam.z;cam.z=zoom*framing;
       try { return projectOriginal(x,y); } finally { cam.z=zoom; }
     };
-    cv.addEventListener('pointerdown',event=>{
+    let touch=null;
+    function selectFigure(event){
       if(!G||!hl.length)return;
-      event.stopImmediatePropagation();
       if(busy)return;
       const rect=cv.getBoundingClientRect(),density=cv.width/rect.width;
       const scale=Math.min(cv.width,cv.height)/750*cam.z;
@@ -150,7 +150,19 @@
         if(d<distance){distance=d;nearest=i;}
       }
       if(nearest!==null&&distance<45){stamp++;act({t:'move',i:nearest});}
+    }
+    cv.addEventListener('pointerdown',event=>{
+      if(!G||!hl.length)return;
+      event.stopImmediatePropagation();
+      if(event.pointerType==='touch'){
+        touch={id:event.pointerId,x:event.clientX,y:event.clientY,stamp};
+      }else selectFigure(event);
     },true);
+    cv.addEventListener('pointerup',event=>{
+      const start=touch;touch=null;
+      if(start&&event.pointerId===start.id&&stamp===start.stamp&&Math.hypot(event.clientX-start.x,event.clientY-start.y)<12)selectFigure(event);
+    });
+    cv.addEventListener('pointercancel',()=>{touch=null;});
 
     // Use the actual display density for sharp skin and lobby previews as well.
     function preview(canvas, logicalW, logicalH, render) {

@@ -6,6 +6,10 @@ class WP_REST_Response { public $data; function __construct($data) { $this->data
 function add_action(...$args) {} function register_activation_hook(...$args) {} function register_deactivation_hook(...$args) {}
 function wp_json_encode($data, $flags=0) { return json_encode($data,$flags); }
 function sanitize_text_field($text) { return trim(strip_tags($text)); }
+function home_url($path){return 'https://example.test'.$path;}
+function rest_url($path){return 'https://example.test/wp-json/'.$path;}
+function plugins_url($path,$file){return 'https://example.test/plugin/'.$path;}
+function esc_url($url){return $url;}
 $rates=[];
 function get_transient($key) { global $rates; return $rates[$key]??false; }
 function set_transient($key,$value,$ttl) { global $rates; $rates[$key]=$value; }
@@ -100,3 +104,5 @@ ok(count($kicked->data['status']['L'])===1,'admin kick frees lobby slot');
 $removed=poll_room($kg);
 ok($removed instanceof WP_Error && str_contains($removed->message,'entfernt'),'kicked session revoked with clear explanation');
 ok(call_api(['op'=>'kick','code'=>$guest['code'],'token'=>$guest['token'],'uid'=>'host01']) instanceof WP_Error,'kick rejected after game starts');
+ob_start();KK_Online::assets();$assets=ob_get_clean();
+ok(str_contains($assets,'controls.css')&&str_contains($assets,'controls.js')&&str_contains($assets,'visuals.js')&&str_contains($assets,'online.js')&&str_contains($assets,'"home"'),'plugin serves mobile styles, controls and canonical home configuration');

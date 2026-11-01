@@ -1,8 +1,18 @@
 # Kegel-Krach Online für WordPress
 
-## Update auf Version 1.3
+## Update auf Version 1.4
 
 Die neue ZIP-Datei über **Plugins → Neues Plugin hinzufügen → Plugin hochladen** hochladen. WordPress zeigt die vorhandene Version an: **Aktuelles durch hochgeladenes ersetzen** wählen. Danach den WP-Rocket-Cache leeren und die Spielseite auf allen Geräten neu laden. Bestehende Partien vor dem Update beenden. Der Elementor-Spielcode bleibt unverändert.
+
+## Neu in Version 1.4
+
+Auf Handys und schmalen Bildschirmen gibt es eine eigene Steuerfläche mit großem **Würfeln**-Knopf oder vier direkten **Figur 1–4**-Knöpfen. Es werden nur die gerade passenden Bedienelemente angezeigt. Nur erlaubte Figuren sind anwählbar, und während der Übertragung verhindert eine Sperre doppelte Eingaben. Auf dem Handy wird ein einzelner legaler Zug nicht mehr automatisch ausgeführt: Der Spieler wählt ihn selbst. Wischen auf dem Brett zählt nicht als Tippen.
+
+Der Chat ist einklappbar, im Querformat stehen die Bedienelemente neben dem Brett. Abstände berücksichtigen Bildschirmränder und größere Vollbildbeschriftungen. Die Handyansicht wurde lokal im Browser mit Hoch- und Querformat-Fenstern geprüft, inklusive Figurwahl, Chat und Logo-Navigation. Reale Bildschirmtastaturen und echte Mobilgeräte wurden nicht geprüft.
+
+Ein dauerhaft sichtbares **Kegel-Krach-Logo** sowie die Überschriften führen zur Website-Startseite (WordPress `home_url`). Vor der Navigation wird die Online-Lobby nach Möglichkeit verlassen; eine gestörte Verbindung blockiert die Navigation höchstens 1,2 Sekunden. Auch reguläre WordPress-Logolinks werden auf allen Seiten auf diese Startseite gesetzt. Dies ist die Website-Startseite, nicht nur das Spielmenü. **Zurück** in der Lobby führt weiterhin zum Spielmenü.
+
+Zusätzliche Tests: zwei Spielclients mit mobiler und Desktop-Steuerung, direktes Würfeln/Bewegen, wiederholte identische Würfe, Chat-Umschaltung, Startseitenlinks innerhalb und außerhalb des Spiels sowie Tap-/Wisch-Unterscheidung.
 
 ## Neu in Version 1.3
 

@@ -34,7 +34,16 @@ evaluate('tl=.8;hl=[0];busy=false;act=a=>{globalThis.selectedMove=a};');
 const target=evaluate('w2s(...wp(G.pl[0].s,G.pc[0][0]+G.d,0))');
 element.dispatchEvent(new w.MouseEvent('pointerdown',{clientX:target[0],clientY:target[1],bubbles:true}));
 assert.equal(w.selectedMove.i,0);
+function touchEvent(type,x,y){const event=new w.MouseEvent(type,{clientX:x,clientY:y,bubbles:true});Object.defineProperties(event,{pointerType:{value:'touch'},pointerId:{value:7}});return event;}
+w.selectedMove=null;
+element.dispatchEvent(touchEvent('pointerdown',target[0],target[1]));
+assert.equal(w.selectedMove,null);
+element.dispatchEvent(touchEvent('pointerup',target[0]+20,target[1]));
+assert.equal(w.selectedMove,null);
+element.dispatchEvent(touchEvent('pointerdown',target[0],target[1]));
+element.dispatchEvent(touchEvent('pointerup',target[0],target[1]));
+assert.equal(w.selectedMove.i,0);
 assert.equal(evaluate('cam.z'),1);
 assert.ok(ctx.getImageData(0,0,1200,680).data.some((n,i)=>i%4!==3&&n>200));
-console.log('PASS: all 16 colour/skin combinations render; normal/tilted board and airborne figure render; tilted click target stays correct; game state and zoom unchanged');
+console.log('PASS: all 16 colour/skin combinations render; normal/tilted board and airborne figure render; click/tap correct, swipe ignored; game state and zoom unchanged');
 dom.window.close();
