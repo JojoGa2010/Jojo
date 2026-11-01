@@ -10,16 +10,19 @@ const source = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 const adapter = readFileSync(new URL('../assets/online.js', import.meta.url), 'utf8');
 const rooms = new Map();
 let number = 0;
+function status(room) {
+  return {epoch:room.epoch,host_uid:room.host,offer:room.offer,old_name:'Anna',public:room.public,L:room.members.map(({token,...p})=>p),state:room.state};
+}
 async function fetchMock(_, options) {
   const b = JSON.parse(options.body);
   let result;
   if (b.op === 'create') {
-    const code = ['ABCD', 'EFGH', 'JKLM'][number++];
+    const code = ['ABCD', 'EFGH', 'JKLM', 'NPQR', 'STUV', 'WXYZ'][number++];
     const member = { uid: b.uid, n: b.n, skin: b.skin, token: b.uid + '-secret' };
-    rooms.set(code, { members: [member], events: [], public: b.public, started: false });
+    rooms.set(code, { members: [member], events: [], public: b.public, started: false,host:b.uid,epoch:1,state:null,offer:null });
     result = { code, token: member.token, seq: 0 };
   } else if (b.op === 'list') {
-    result = { rooms: [...rooms].filter(([, r]) => r.public && !r.started).map(([code, r]) => ({ code, n: r.members[0].n, c: r.members.length })) };
+    result = { rooms: [...rooms].filter(([, r]) => r.public && r.host && !r.started).map(([code, r]) => ({ code, n: r.members[0].n, c: r.members.length })) };
   } else {
     const room = rooms.get(b.code);
     if (!room) return { ok: false, status: 404, json: async () => ({ message: 'Lobby nicht gefunden.' }) };
@@ -27,7 +30,17 @@ async function fetchMock(_, options) {
       const member = { uid: b.uid, n: b.n, skin: b.skin, token: b.uid + '-secret' };
       room.members.push(member);
       result = { code: b.code, token: member.token, seq: room.events.length };
-    } else if (b.op === 'poll') result = { events: room.events.filter(e => e.seq > b.after) };
+    } else if (b.op === 'poll') result = { events: room.events.filter(e => e.seq > b.after),status:status(room),removed:!room.members.some(p=>p.token===b.token) };
+    else if(b.op==='leave') {
+      const member=room.members.find(p=>p.token===b.token);
+      room.members=room.members.filter(p=>p!==member);room.epoch++;
+      if(room.host===member.uid){room.host=null;room.offer=room.members.length?{uid:room.members[0].uid,expires:Date.now()/1000+20}:null;}
+      result={ok:true};
+    } else if(b.op==='answer') {
+      const member=room.members.find(p=>p.token===b.token);
+      if(b.accept){room.host=member.uid;room.epoch++;room.offer=null;}
+      result={ok:true,status:status(room)};
+    }
     else {
       const member = room.members.find(p => p.token === b.token);
       let type = b.type, data = b.data, uid = member.uid;
@@ -35,8 +48,9 @@ async function fetchMock(_, options) {
         type = 'lobby'; uid = 'server';
         data = { L: room.members.map(({ token, ...p }) => p), pub: room.public };
       }
-      if (type === 'game') room.started = true;
-      room.events.push({ seq: room.events.length + 1, type, data, uid });
+      if (type === 'game') {room.started = true;room.state=data.G;}
+      if(type==='ev')for(const e of data.evs)if(e.snap)room.state=e.snap;
+      room.events.push({ seq: room.events.length + 1, type, data, uid,epoch:room.epoch });
       result = { ok: true };
     }
   }
@@ -100,6 +114,34 @@ try {
   B("sendChat('Hallo Anna')");
   await until(() => A("bub[1] && bub[1].t==='Hallo Anna'"), 'chat');
   console.log('PASS: chat reaches the other client');
+  const savedBoard=B('JSON.stringify(G.pc)');
+  const r=rooms.get(code);const old=r.host;
+  r.host=null;r.epoch++;r.members=r.members.filter(p=>p.uid!==old);
+  r.offer={uid:r.members[0].uid,expires:Date.now()/1000+20};
+  r.state=structuredClone(r.state);r.state.pl[0].bot=1;r.state.pl[0].uid='departed_'+old;
+  await until(()=>!b.window.document.querySelector('#kk-admin-dialog').hidden,'handover dialog');
+  assert.equal(B('H'),null);assert.equal(B('busy'),true);
+  const yes=[...b.window.document.querySelectorAll('#kk-admin-dialog button')].find(e=>e.textContent==='Ja, ich übernehme');
+  assert.equal(yes.hidden,false);yes.click();
+  await until(()=>B('isHost && H !== null && !busy'),'new admin resumes');
+  assert.equal(B('JSON.stringify(G.pc)'),savedBoard);
+  assert.equal(B('G.pl[0].bot'),1);
+  assert.equal(b.window.document.querySelector('#kk-admin-dialog').hidden,true);
+  console.log('PASS: handover pauses, asks consent and resumes from saved board as new admin');
+  // Test navigation separately from the ongoing game.
+  const nav=client('Navigation');
+  try {
+    await until(()=>nav.window.document.documentElement.dataset.kkOnline,'navigation adapter');
+    for(const pub of [false,true]) {
+      await nav.window.eval(`mkLobby(${pub})`);
+      const navCode=nav.window.eval('R.code');
+      await nav.window.document.querySelector('#kk-lobby-back').onclick();
+      assert.equal(nav.window.eval('R'),null);
+      assert.equal(nav.window.document.querySelector('#home').classList.contains('on'),true);
+      assert.equal(rooms.get(navCode).members.length,0);
+    }
+    console.log('PASS: back exits private and public lobby, removes membership and returns to menu');
+  }finally{nav.window.close();}
   await A('mkLobby(true)');
   const c = client('Clara');
   try {

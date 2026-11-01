@@ -1,5 +1,9 @@
 # Kegel-Krach Online für WordPress
 
+## Update auf Version 1.1
+
+Die neue ZIP-Datei über **Plugins → Neues Plugin hinzufügen → Plugin hochladen** hochladen. WordPress zeigt die vorhandene Version an: **Aktuelles durch hochgeladenes ersetzen** wählen. Danach den WP-Rocket-Cache leeren und die Spielseite auf allen Geräten neu laden. Bestehende Partien vor dem Update beenden. Der Elementor-Spielcode bleibt unverändert.
+
 ## Installation auf digitalwohnen.at
 
 1. Die Datei **Kegel-Krach-Online.zip** herunterladen. Nicht entpacken.
@@ -17,7 +21,11 @@ Der bisherige HTML-Code in Elementor bleibt erhalten, einschließlich der funkti
 3. Gerät B: dieselbe Spielseite öffnen, **Mit Freunden**, eigenen Namen eingeben, Code eintragen, **Beitreten**.
 4. Sobald beide Namen in der Lobby stehen, drückt der Gastgeber **Spiel starten**. „Freie Plätze mit Bots füllen“ kann ausgeschaltet werden.
 
-Für einen Test auf einem einzigen Computer das zweite Spiel in einem privaten Browserfenster öffnen. Die Spielseite muss auf beiden Geräten geladen bleiben. Der Gastgeber führt die Partie aus; wenn er die Seite verlässt oder sein Gerät die Seite im Hintergrund anhält, muss eine neue Partie begonnen werden.
+Für einen Test auf einem einzigen Computer das zweite Spiel in einem privaten Browserfenster öffnen. In privaten und offenen Lobbys führt **← Zurück** zum Menü und meldet den Spieler von der Lobby ab. Verlässt der Admin die Lobby über diesen Knopf, beginnt die Übernahme sofort.
+
+Nach **60 Sekunden ohne Eingabe** (Mausbewegung, Tippen, Berührung) oder ohne Serververbindung verliert der Admin seine Rolle. Die Meldung **„Admin hat das Spiel verlassen“** erscheint. Ein zufällig ausgewählter Mitspieler, der in den letzten 20 Sekunden verbunden war, wird gefragt, ob er Admin sein möchte. Er hat 20 Sekunden für **Ja, ich übernehme** oder **Nein, danke**. Bei Ablehnung oder Fristablauf wird ein anderer verbundener Mitspieler gefragt. Wenn niemand übernimmt, bleibt das Spiel pausiert und jeder kann zum Menü zurückkehren.
+
+Bei einer laufenden Partie wird der zuletzt auf dem Server gespeicherte Spielstand übernommen. Ein Bot spielt die Figuren des ausgeschiedenen Admins weiter. Der ausgeschiedene Admin kann mit seiner alten Sitzung nicht mehr eingreifen. Die neue Rolle wird erst nach ausdrücklicher Zustimmung vergeben.
 
 **Online → Offenes Spiel erstellen** macht eine wartende Lobby in der Liste sichtbar. **Schnellspiel** tritt einer offenen Lobby bei oder erstellt eine neue. Angezeigte Lobbys sind echte Räume auf dieser WordPress-Website.
 
@@ -34,14 +42,15 @@ Für einen Test auf einem einzigen Computer das zweite Spiel in einem privaten B
 - Vier Spieler pro Lobby, zufälliger vierstelliger Code und ein geheimer Sitzungsschlüssel je Teilnehmer. Nur ein Hash des Schlüssels liegt in der Datenbank. Die Schlüssel werden nicht an Mitspieler verteilt.
 - Nur der Gastgeber darf Spielstände und Würfelergebnisse senden. Aktionen und Chat werden auf dem Server an die authentifizierte Spielerkennung gebunden. Die Spielregeln werden wie bisher im Browser des Gastgebers geprüft. Das ist für private Freizeitpartien ausgelegt, nicht für manipulationssichere Turniere oder Einsätze.
 - InnoDB-Transaktionen mit Zeilensperren schützen parallele Lobby-Änderungen. Die letzten 256 Nachrichten werden für kurze Unterbrechungen aufbewahrt. Ein abgelaufener Nachrichten-Cursor zeigt einen Fehler statt einen falschen Spielstand.
-- Der Gastgeber muss mindestens alle 90 Sekunden verbunden bleiben. Ein Neuladen setzt die Partie nicht fort. Verlassene Gastplätze können in dieser Version nicht neu besetzt werden.
+- Ein Neuladen setzt die eigene Sitzung nicht fort. Verlassene Gastplätze in einer wartenden Lobby werden wieder frei. Eine laufende Partie bleibt auf ihre ursprünglichen Figurenplätze beschränkt; ausgeschiedene Figuren werden zu Bots.
+- Admin-Wechsel werden auf dem Server unter einer Zeilensperre entschieden. Eine Versionsnummer je Admin-Generation verhindert, dass alte Admin-Ereignisse den übernommenen Spielstand überschreiben. Automatische Spielanimationen und Bot-Züge zählen nicht als menschliche Eingabe.
 - Ein stündlicher WordPress-Cron-Lauf entfernt Räume ohne Aktivität seit zwei Stunden. Deaktivieren des Plugins stoppt diesen Aufräumauftrag.
 - Die API speichert Namen, Figurenwahl und Spielnachrichten vorübergehend in einer eigenen WordPress-Tabelle. Es werden keine Daten an externe Spielserver geschickt.
 - Bei vielen gleichzeitig laufenden Partien muss die Leistungsfähigkeit des WordPress-Hostings geprüft werden. Es ist ein Abfrageverfahren, kein WebSocket-Server.
 
 ## Prüfungen
 
-`tests/server.php` prüft die PHP-Endpunkte mit einer WordPress-/Datenbank-Testumgebung: Lobby, Mitgliedschaft, geheime Schlüssel, öffentliche/private Räume, Spielstart, Spielzüge, Chat, Kapazität und Verbindungsabbruch. Diese Tests ersetzen keinen Test auf dem tatsächlichen WordPress-Hosting.
+`tests/server.php` prüft die PHP-Endpunkte mit einer WordPress-/Datenbank-Testumgebung: Lobby, Mitgliedschaft, geheime Schlüssel, öffentliche/private Räume, Spielstart, Spielzüge, Chat, Kapazität sowie die 59-/60-Sekunden-Grenze, Annahme/Ablehnung einer Übernahme, abgelaufene Angebote, entzogene Admin-Rechte und Lobby-Austritt. Diese Tests ersetzen keinen Test auf dem tatsächlichen WordPress-Hosting.
 
 Ein Test auf digitalwohnen.at mit zwei Geräten ist nach dem Installieren noch erforderlich.
 

@@ -19,6 +19,96 @@
     if (!config || !config.api) return;
     let joining = false;
     let listing = false;
+    let lastInput = Date.now();
+    for (const name of ['pointerdown', 'pointermove', 'keydown', 'touchstart']) {
+      document.addEventListener(name, event => { if (event.isTrusted) lastInput = Date.now(); }, { passive: true });
+    }
+    const back = document.createElement('button');
+    back.id = 'kk-lobby-back'; back.className = 'g'; back.textContent = '← Zurück';
+    document.querySelector('#lobby .wrap').prepend(back);
+    const transfer = document.createElement('div');
+    transfer.id = 'kk-admin-dialog'; transfer.hidden = true;
+    transfer.setAttribute('role', 'dialog'); transfer.setAttribute('aria-modal', 'true');
+    transfer.setAttribute('aria-label', 'Admin hat das Spiel verlassen');
+    transfer.style.cssText = 'position:fixed;inset:0;z-index:100020;background:#000b;display:grid;place-items:center;padding:20px;color:white';
+    const panel = document.createElement('div');
+    panel.style.cssText = 'background:#2d1b69;padding:24px;border-radius:20px;max-width:440px;display:grid;gap:16px;text-align:center';
+    const title = document.createElement('strong'); title.textContent = 'Admin hat das Spiel verlassen';
+    const explanation = document.createElement('p'); explanation.setAttribute('aria-live', 'polite');
+    const yes = document.createElement('button'); yes.textContent = 'Ja, ich übernehme';
+    const no = document.createElement('button'); no.className = 'g'; no.textContent = 'Nein, danke';
+    const exit = document.createElement('button'); exit.className = 'g'; exit.textContent = '← Zurück zum Menü';
+    panel.append(title, explanation, yes, no, exit); transfer.append(panel); document.body.append(transfer);
+    // Explicitly override Elementor styles while preserving the hidden attribute.
+    const style = document.createElement('style');
+    style.textContent = '#kk-admin-dialog[hidden],#kk-admin-dialog button[hidden]{display:none!important}';
+    document.head.append(style);
+
+    async function leaveLobby() {
+      if (back.disabled) return;
+      back.disabled = true;
+      const connection = R;
+      try {
+        if (connection && !connection.closed) {
+          await connection.queue;
+          await api({ op: 'leave', code: connection.code, token: connection.token });
+        }
+        if (connection) connection.close();
+        R = null; H = null; G = null; L = []; hl = []; busy = false; isHost = false; stamp++;
+        clearInterval(hi); clearInterval(pubT); clearInterval(olT);
+        transfer.hidden = true; show('home'); document.querySelector('#bBk').onclick();
+      } catch (error) { document.querySelector('#lw').textContent = error.message; }
+      finally { back.disabled = false; }
+    }
+    back.onclick = leaveLobby; exit.onclick = leaveLobby;
+    async function answer(accept) {
+      if (!R) return;
+      yes.disabled = no.disabled = true;
+      try {
+        const result = await api({ op: 'answer', code: R.code, token: R.token, accept });
+        lastInput = Date.now();
+        applyStatus(R, result.status);
+      } catch (error) { explanation.textContent = error.message; }
+      finally { yes.disabled = no.disabled = false; }
+    }
+    yes.onclick = () => answer(true); no.onclick = () => answer(false);
+
+    function applyStatus(connection, status) {
+      if (!status || connection.closed || R !== connection) return;
+      const changed = status.epoch !== connection.epoch;
+      connection.epoch = status.epoch;
+      connection.paused = !status.host_uid;
+      isHost = status.host_uid === me.uid;
+      L = status.L;
+      pubRoomFlag = status.public;
+      document.querySelector('#bSt').hidden = !isHost || connection.paused;
+      document.querySelector('#fl').hidden = !isHost || connection.paused;
+      document.querySelector('#lw').textContent = isHost ? 'Du bist Admin.' : connection.paused ? 'Ein neuer Admin wird gesucht…' : 'Warte auf den Admin…';
+      if (!G) drawL();
+      transfer.hidden = !connection.paused;
+      if (connection.paused) {
+        const mine = status.offer && status.offer.uid === me.uid;
+        yes.hidden = no.hidden = !mine;
+        explanation.textContent = mine ? 'Möchtest du Admin sein? Du hast 20 Sekunden zum Antworten.' : status.offer ? 'Ein zufällig ausgewählter Mitspieler wird gefragt, ob er Admin sein möchte.' : 'Niemand hat übernommen. Du kannst zum Menü zurückkehren.';
+      }
+      if (changed) {
+        stamp++; busy = true; H = null; hl = [];
+        document.querySelector('#dpop').classList.remove('on');
+        evq = evq.then(() => {
+          if (connection.closed || R !== connection || connection.epoch !== status.epoch) return;
+          if (status.state) {
+            G = cl(status.state); H = isHost ? cl(status.state) : null;
+            ov = ov2 = null; tl = 0; cam = { x:330, y:330, z:1, sh:0 };
+            show('game'); fit(); setTurn();
+          }
+          busy = connection.paused;
+          if (!connection.paused && G && G.win == null) {
+            ui(); if (isHost) setTimeout(after, 250);
+            say('Ein neuer Admin hat übernommen. Weiter geht’s!');
+          }
+        }).catch(fail);
+      }
+    }
 
     async function api(body) {
       const abort = new AbortController();
@@ -68,6 +158,8 @@
         this.code = session.code;
         this.token = session.token;
         this.seq = session.seq;
+        this.epoch = session.epoch || 1;
+        this.paused = false;
         this.handlers = new Map();
         this.queue = Promise.resolve();
         this.closed = false;
@@ -81,11 +173,16 @@
       async poll() {
         if (this.closed) return;
         try {
-          const result = await api({ op: 'poll', code: this.code, token: this.token, after: this.seq });
+          const result = await api({ op: 'poll', code: this.code, token: this.token, after: this.seq, activityAge: Math.floor((Date.now() - lastInput) / 1000) });
           if (this.closed) return;
+          if (result.removed) {
+            this.close(); fail(new Error('Du warst eine Minute inaktiv oder offline. Du hast das Spiel als Admin verlassen.')); return;
+          }
+          applyStatus(this, result.status);
           this.failures = 0;
           for (const event of result.events) {
             if (event.seq <= this.seq) continue;
+            if ((event.epoch || 1) !== this.epoch) { this.seq = event.seq; continue; }
             for (const callback of this.handlers.get(event.type) || []) {
               callback({ data: event.data, isMe: event.uid === me.uid });
             }
@@ -102,8 +199,9 @@
       emit(type, data) {
         const send = this.queue.then(() => {
           if (this.closed) throw new Error('Die Lobby-Verbindung ist geschlossen.');
-          return api({ op: 'emit', code: this.code, token: this.token, type, data });
+          return api({ op: 'emit', code: this.code, token: this.token, type, data, epoch: this.epoch });
         });
+        send.then(result => { if (result.paused) applyStatus(this, result.status); }).catch(() => {});
         // Legacy game calls emit without awaiting. Handle rejection here as well.
         this.queue = send.catch(error => { this.close(); fail(error); });
         return send;
@@ -129,7 +227,7 @@
         if (k >= 0) bubble(k, String(message.data.t).slice(0, 40));
       });
       connection.on('act', message => {
-        if (!isHost || !H || !message.data) return;
+        if (!isHost || connection.paused || !H || !message.data) return;
         const k = H.pl.findIndex(p => p.uid === message.data.uid);
         if (k >= 0) handle(k, message.data.a);
       });
@@ -149,6 +247,8 @@
     function player() { return { uid: me.uid, n: me.n, skin: me.skin }; }
     function resetConnection() {
       if (R && R.close) R.close();
+      transfer.hidden = true;
+      lastInput = Date.now();
       clearInterval(hi);
       clearInterval(pubT);
       document.querySelector('#oe').textContent = '';
