@@ -1,0 +1,16 @@
+{
+  "name": "kegel-krach-online",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "node --check assets/online.js",
+    "test:server": "node tests/run-server.mjs",
+    "test:client": "node tests/client.mjs"
+  },
+  "devDependencies": {
+    "@php-wasm/node": "3.1.61",
+    "@php-wasm/universal": "3.1.61",
+    "jsdom": "30.1.3"
+  }
+}

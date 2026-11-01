@@ -1,0 +1,11 @@
+import { readFileSync } from 'node:fs';
+import { PHP } from '@php-wasm/universal';
+import { loadNodeRuntime } from '@php-wasm/node';
+const plugin = readFileSync(new URL('../kegel-krach-online.php', import.meta.url), 'utf8');
+const checks = readFileSync(new URL('server.php', import.meta.url), 'utf8');
+const php = new PHP(await loadNodeRuntime('8.4', { emscriptenOptions: { processId: 1 } }));
+const response = await php.run({ code: checks.replace("require '/plugin.php';", plugin.replace(/^<\?php/, '')) });
+console.log(response.text);
+if (response.errors) console.error(response.errors);
+if (response.exitCode || response.text.includes('FAIL:') || response.text.includes('Fatal error')) process.exitCode = 1;
+php.exit();
