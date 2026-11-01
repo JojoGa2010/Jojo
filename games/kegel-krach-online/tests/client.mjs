@@ -78,6 +78,7 @@ function client(name) {
   w.AbortController = AbortController;
   w.KKOnlineConfig = { api: '/wp-json/kegel-krach/v1/' };
   w.eval(source);
+  w.eval(readFileSync(new URL('../assets/visuals.js', import.meta.url), 'utf8'));
   w.eval("dice=async()=>{};ride=async()=>{};hop=async()=>{};kick=async()=>{};homeCam=async()=>{};");
   w.eval(adapter);
   w.document.querySelector('#nm').value = name;

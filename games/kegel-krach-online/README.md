@@ -1,8 +1,16 @@
 # Kegel-Krach Online für WordPress
 
-## Update auf Version 1.2
+## Update auf Version 1.3
 
 Die neue ZIP-Datei über **Plugins → Neues Plugin hinzufügen → Plugin hochladen** hochladen. WordPress zeigt die vorhandene Version an: **Aktuelles durch hochgeladenes ersetzen** wählen. Danach den WP-Rocket-Cache leeren und die Spielseite auf allen Geräten neu laden. Bestehende Partien vor dem Update beenden. Der Elementor-Spielcode bleibt unverändert.
+
+## Neu in Version 1.3
+
+Die Figuren sind größer und plastischer gezeichnet: mit Farbverläufen, Lichtkanten, Bodenschatten, deutlicheren Augen und ausgearbeiteten Hüten. Nummern 1–4 unterscheiden die eigenen Figuren. Spielernamen stehen gesammelt im Startbereich statt über jeder einzelnen Figur. Die Auswahl-, Lobby- und Menü-Vorschauen berücksichtigen die Bildschirmauflösung.
+
+Die Kamera lässt mehr Platz für hohe Hüte am oberen Rand. Die Figuren bleiben in geneigten Ansichten aufrecht. Klickkoordinaten und Kameraprojektion verwenden dieselbe neue Einrahmung. Es handelt sich weiterhin um die Canvas-Darstellung mit plastischer Schattierung; es wird keine WebGL-Engine benötigt.
+
+Zusätzliche Prüfungen: alle 16 Farb-/Figurenkombinationen, normales und geneigtes Brett, springende Figuren und korrektes Anklicken in der geneigten Ansicht. Renderbilder wurden lokal visuell geprüft. Die Darstellung auf echten Smartphones und auf dem Live-Hosting muss nach dem Update geprüft werden. Entwickler können `npm run test:visuals -- /absoluter/Pfad/Kegel-Krach.html /absoluter/Ausgabeordner` ausführen.
 
 ## Neu in Version 1.2
 
