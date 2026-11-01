@@ -17,13 +17,16 @@
   function install(){
     if(document.documentElement.dataset.kkControls)return;
     document.documentElement.dataset.kkControls='1';
-    const mobile=()=>window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
     const game=document.querySelector('#game');
-    const brand=document.createElement('a');brand.id='kk-home-logo';brand.href=home;brand.dataset.kkHome='1';brand.textContent='🎳 Kegel-Krach';brand.setAttribute('aria-label','Zur Startseite');document.body.append(brand);
+    function mark(){const image=document.createElement('img');image.src=(config.assets||'/')+'logo.svg';image.alt='';image.width=32;image.height=32;return image;}
+    const brand=document.createElement('a');brand.id='kk-home-logo';brand.href=home;brand.dataset.kkHome='1';brand.append(mark(),document.createTextNode('Kegel-Krach'));brand.setAttribute('aria-label','Zur Startseite');document.body.append(brand);
     for(const heading of document.querySelectorAll('#home h1,#lobby h1')){
       if(heading.closest('a'))continue;
       const link=document.createElement('a');link.href=home;link.dataset.kkHome='1';link.setAttribute('aria-label','Zur Startseite');
-      for(const node of [...heading.childNodes])if(node.nodeType===3)link.append(node);
+      const label=heading.closest('#home')?'Kegel-Krach':'Lobby';
+      for(const node of [...heading.childNodes])if(node.nodeType===3)node.remove();
+      if(heading.closest('#home'))link.append(mark());
+      link.append(document.createTextNode(label));
       heading.prepend(link);
     }
     document.addEventListener('click',async event=>{
@@ -34,16 +37,39 @@
       if(window.KKOnlineLeave)await Promise.race([window.KKOnlineLeave(),new Promise(resolve=>setTimeout(resolve,1200))]);
       window.location.assign(home);
     });
-    const controls=document.createElement('section');controls.id='kk-touch-controls';controls.setAttribute('aria-label','Spielsteuerung');
-    const status=document.createElement('div');status.id='kk-control-status';status.setAttribute('aria-live','polite');
-    const roll=document.createElement('button');roll.id='kk-roll';roll.type='button';roll.textContent='🎲 Würfeln';
-    const moves=document.createElement('div');moves.id='kk-moves';
-    const buttons=Array.from({length:4},(_,i)=>{
-      const button=document.createElement('button');button.type='button';button.textContent='Figur '+(i+1);button.setAttribute('aria-label','Figur '+(i+1)+' bewegen');moves.append(button);return button;
-    });
-    controls.append(status,roll,moves);game.append(controls);
+    const clock=document.createElement('small');clock.id='kk-stopwatch';clock.setAttribute('role','timer');clock.setAttribute('aria-live','off');clock.title='Spielzeit';
+    const die=document.querySelector('#die');die.setAttribute('role','button');die.setAttribute('aria-label','Würfel antippen');die.tabIndex=0;
+    die.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();if(!busy&&!document.querySelector('#dbtn').hidden)die.click();}});
+    document.querySelector('#game .hud').append(clock);
+    let started=null,ended=null,lastClock='';
+    function updateClock(){
+      die.setAttribute('aria-disabled',String(busy||document.querySelector('#dbtn').hidden));
+      if(!G){started=null;ended=null;}
+      if(G&&started===null)started=performance.now();
+      if(G&&G.win!=null&&ended===null)ended=performance.now();
+      const seconds=started===null?0:Math.max(0,Math.floor(((ended??performance.now())-started)/1000));
+      const two=n=>String(n).padStart(2,'0');
+      const text=seconds>=3600?Math.floor(seconds/3600)+':'+two(Math.floor(seconds/60)%60)+':'+two(seconds%60):two(Math.floor(seconds/60))+':'+two(seconds%60);
+      if(text!==lastClock){clock.textContent=text;clock.setAttribute('aria-label','Spielzeit '+text);lastClock=text;}
+    }
+    function canvasOffset(){game.style.setProperty('--kk-cv-left',cv.offsetLeft+'px');game.style.setProperty('--kk-cv-top',cv.offsetTop+'px');}
+    const originalBegin=beginGame;
+    beginGame=function(state){started=performance.now();ended=null;originalBegin(state);canvasOffset();updateClock();};
+    // Keep the original die prompt on every device, but require a figure tap
+    // even when there is only one legal move.
+    ui=function(){
+      if(!G||G.win!=null)return;
+      setTurn();hl=[];
+      if(!isMine(G.turn))return;
+      if(G.phase==='roll'){
+        document.querySelector('#dpop').classList.add('on');
+        document.querySelector('#dl').textContent=G.pl[G.turn].n+', tippe auf den Würfel!';
+        document.querySelector('#dbtn').hidden=false;
+        resetDie();document.querySelector('#die').classList.add('ask');
+      }else{hl=legal(G,G.turn,G.d);}
+    };
     const chat=document.querySelector('#eb');
-    const chatToggle=document.createElement('button');chatToggle.id='kk-chat-toggle';chatToggle.className='g';chatToggle.textContent='💬 Chat';chatToggle.type='button';chatToggle.setAttribute('aria-expanded','false');game.append(chatToggle);
+    const chatToggle=document.createElement('button');chatToggle.id='kk-chat-toggle';chatToggle.className='g';chatToggle.textContent='Chat';chatToggle.type='button';chatToggle.setAttribute('aria-expanded','false');game.append(chatToggle);
     chatToggle.onclick=()=>{
       const open=game.classList.toggle('kk-chat-open');chatToggle.setAttribute('aria-expanded',String(open));
       if(open){const input=chat.querySelector('input');if(input)input.focus();}
@@ -51,45 +77,9 @@
     chat.querySelector('input')?.addEventListener('keydown',event=>{
       if(event.key==='Enter'){game.classList.remove('kk-chat-open');chatToggle.setAttribute('aria-expanded','false');event.target.blur();}
     });
-    let pending=false,pendingKey='',lastStatus='';
-    const key=()=>G?JSON.stringify([R?R.epoch:0,G.turn,G.phase,G.d,G.pc,G.tries,G.win]):'';
-    function send(action){
-      if(pending||busy||!G||G.win!=null||!isMine(G.turn))return;
-      if(action.t==='move'&&(G.phase!=='move'||!hl.includes(action.i)))return;
-      if(action.t==='roll'&&G.phase!=='roll')return;
-      pending=true;pendingKey=key();update();act(action);
-    }
-    roll.onclick=()=>send({t:'roll'});buttons.forEach((button,i)=>button.onclick=()=>send({t:'move',i}));
-    const oldUI=ui;
-    ui=function(){
-      if(!mobile()){oldUI();return;}
-      if(!G||G.win!=null)return;
-      setTurn();hl=[];
-      if(isMine(G.turn)&&G.phase==='move')hl=legal(G,G.turn,G.d);
-      // The mobile roll button replaces the blocking "tap the die" prompt.
-      document.querySelector('#dpop').classList.remove('on');
-      update();
-    };
-    function update(){
-      if(pending&&(key()!==pendingKey||!G||(R&&R.closed)))pending=false;
-      const mine=!!G&&G.win==null&&isMine(G.turn);
-      const enabled=mine&&!busy&&!pending;
-      const selecting=mine&&G.phase==='move';
-      roll.hidden=selecting;moves.hidden=!selecting;
-      roll.disabled=!enabled||G.phase!=='roll';
-      const rollText=pending?'Zug wird gesendet…':busy?'Animation läuft…':'🎲 Würfeln';
-      if(roll.textContent!==rollText)roll.textContent=rollText;
-      buttons.forEach((button,i)=>{button.disabled=!enabled||G.phase!=='move'||!hl.includes(i);});
-      controls.style.setProperty('--kk-player',G?COL[G.pl[G.turn].s]:'#ffd60a');
-      const text=!G?'Bereit':G.win!=null?'Partie beendet':!mine?'Warte auf '+G.pl[G.turn].n:pending?'Dein Zug wird übertragen':busy?'Bitte kurz warten':G.phase==='roll'?'Du bist dran – würfle!':'Wähle eine Figur · gewürfelt: '+G.d;
-      if(text!==lastStatus){status.textContent=text;lastStatus=text;}
-    }
-    const ticker=setInterval(()=>{if(!document.documentElement.isConnected){clearInterval(ticker);return;}update();},120);
-    let previousMobile=mobile();
-    window.addEventListener('resize',()=>{
-      if(G&&!busy&&mobile()!==previousMobile){previousMobile=mobile();ui();}
-      if(G)fit();
-    });
-    update();
+    const ticker=setInterval(updateClock,200);
+    window.addEventListener('pagehide',()=>clearInterval(ticker),{once:true});
+    window.addEventListener('resize',()=>{if(G){fit();canvasOffset();}});
+    updateClock();
   }
 })();

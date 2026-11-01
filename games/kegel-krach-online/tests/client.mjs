@@ -113,16 +113,12 @@ try {
   assert.equal(a.window.document.querySelector('#lobby h1 a').getAttribute('href'),'/');
   console.log('PASS: persistent logo and screen headings link to website home');
   a.window.Math.random = () => .95;
-  if(mobileMode){
-    await until(()=>!a.window.document.querySelector('#kk-roll').disabled,'mobile roll enabled');
-    assert.equal(a.window.document.querySelector('#dpop').classList.contains('on'),false);
-    a.window.document.querySelector('#kk-roll').click();
-  }else A("act({t:'roll'})");
+  assert.equal(a.window.document.querySelector('#kk-roll'),null);
+  assert.equal(a.window.document.querySelector('#kk-moves'),null);
+  assert.equal(a.window.document.querySelector('#dpop').classList.contains('on'),true);
+  a.window.document.querySelector('#die').click();
   await until(() => A("!busy && G.phase==='move'") && B("G.phase==='move'"), 'host roll');
-  if(mobileMode){
-    await until(()=>!a.window.document.querySelector('#kk-moves button').disabled,'mobile figure enabled');
-    a.window.document.querySelector('#kk-moves button').click();
-  }else A("act({t:'move',i:0})");
+  A("act({t:'move',i:0})");
   await until(() => A('!busy && G.pc[0][0]===0') && B('G.pc[0][0]===0'), 'host piece enters board');
   a.window.Math.random = () => 0;
   A("act({t:'roll'})");
@@ -187,17 +183,32 @@ try {
       await until(()=>solo.window.document.documentElement.dataset.kkControls,'mobile controls installed');
       solo.window.eval("isHost=true;R=null;beginGame(mk([{n:'Solo',uid:'L',skin:0},{n:'Ben',uid:'other',skin:1}]))");
       solo.window.Math.random=()=>.2;
-      const roll=solo.window.document.querySelector('#kk-roll');
-      await until(()=>!roll.disabled,'first retry roll');roll.click();
+      const roll=solo.window.document.querySelector('#die');
+      await until(()=>!solo.window.document.querySelector('#dbtn').hidden,'first retry roll');roll.click();
       await until(()=>solo.window.eval('G.tries')===1,'first base retry');
-      await until(()=>!roll.disabled,'second retry roll');roll.click();
+      await until(()=>!solo.window.document.querySelector('#dbtn').hidden,'second retry roll');roll.click();
       await until(()=>solo.window.eval('G.tries')===2,'second base retry');
-      await until(()=>!roll.disabled,'third retry available after identical die');
-      console.log('PASS: repeated identical rolls at home unlock controls correctly');
+      await until(()=>!solo.window.document.querySelector('#dbtn').hidden,'third retry available after identical die');
+      console.log('PASS: repeated rolls work by clicking the die; no extra action buttons');
       const toggle=solo.window.document.querySelector('#kk-chat-toggle');toggle.click();
       assert.equal(toggle.getAttribute('aria-expanded'),'true');
       toggle.click();assert.equal(toggle.getAttribute('aria-expanded'),'false');
       console.log('PASS: mobile chat can open and close');
+      solo.window.eval("G.pc[0]=[-1,-1,-1,2];G.phase='move';G.d=1;H=cl(G);ui()");
+      await sleep(50);assert.equal(solo.window.eval('G.pc[0][3]'),2);
+      console.log('PASS: a sole legal move still requires a figure tap');
+      let clockNow=0;Object.defineProperty(solo.window.performance,'now',{value:()=>clockNow});
+      solo.window.eval("beginGame(mk([{n:'Solo',uid:'L',skin:0},{n:'Ben',uid:'other',skin:1}]))");
+      const clock=solo.window.document.querySelector('#kk-stopwatch');
+      assert.equal(clock.textContent,'00:00');clockNow=65000;
+      await until(()=>clock.textContent==='01:05','stopwatch running');
+      solo.window.eval('G.win=0');await sleep(30);clockNow=90000;await sleep(30);
+      assert.equal(clock.textContent,'01:05');
+      solo.window.eval("beginGame(mk([{n:'Solo',uid:'L',skin:0},{n:'Ben',uid:'other',skin:1}]))");
+      assert.equal(clock.textContent,'00:00');
+      assert.ok(solo.window.document.querySelector('#kk-home-logo img').src.endsWith('/logo.svg'));
+      assert.ok(!solo.window.document.querySelector('#kk-home-logo').textContent.includes('🎳'));
+      console.log('PASS: stopwatch starts, freezes at game end, resets for next game; custom SVG logo replaces emoji');
     }finally{solo.window.close();}
   }
 } finally { a.window.close(); b.window.close(); }

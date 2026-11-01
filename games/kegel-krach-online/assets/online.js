@@ -63,7 +63,8 @@
     panel.style.cssText = 'background:#2d1b69;padding:24px;border-radius:20px;max-width:440px;display:grid;gap:16px;text-align:center';
     const title = document.createElement('strong'); title.textContent = 'Admin hat das Spiel verlassen';
     const homeLink = document.createElement('a'); homeLink.href = config.home || '/'; homeLink.dataset.kkHome = '1';
-    homeLink.textContent = '🎳 Kegel-Krach · Startseite'; homeLink.style.cssText = 'color:#ffd60a;text-decoration:none;padding:10px';
+    const homeMark=document.createElement('img');homeMark.src=(config.assets||'/')+'logo.svg';homeMark.alt='';homeMark.width=28;homeMark.height=28;
+    homeLink.append(homeMark,document.createTextNode('Kegel-Krach · Startseite'));homeLink.style.cssText='color:#ffd60a;text-decoration:none;padding:10px;display:flex;align-items:center;justify-content:center;gap:8px';
     const explanation = document.createElement('p'); explanation.setAttribute('aria-live', 'polite');
     const yes = document.createElement('button'); yes.textContent = 'Ja, ich übernehme';
     const no = document.createElement('button'); no.className = 'g'; no.textContent = 'Nein, danke';
