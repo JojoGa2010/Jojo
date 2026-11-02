@@ -1,0 +1,55 @@
+import {readFileSync} from 'node:fs';
+import {runInContext} from 'node:vm';
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+const html=readFileSync(process.argv[2],'utf8'),themeSource=readFileSync(new URL('../assets/themes.js',import.meta.url),'utf8');
+const palettes=new Set(),scenes=new Set();
+for(let month=0;month<12;month++){
+  const dom=new JSDOM(html.replace(/<script>[\s\S]*?<\/script>/,''),{url:'https://example.test/spiel/',runScripts:'outside-only'}),w=dom.window;
+  const RealDate=w.Date;w.Date=class extends RealDate{constructor(...args){super(...(args.length?args:[2026,month,15,12]));}};
+  w.requestAnimationFrame=()=>0;
+  w.HTMLCanvasElement.prototype.getContext=()=>new Proxy({},{get:()=>()=>{}});
+  const run=code=>runInContext(code,dom.getInternalVMContext());
+  run(html.match(/<script>([\s\S]*?)<\/script>/)[1]);const oldPin=run('pin'),colors=run('JSON.stringify(COL)');run(themeSource);
+  await new Promise(r=>setTimeout(r,270));
+  const t=w.KKSeasonal.themeForDate(new w.Date());
+  assert.equal(w.document.documentElement.dataset.kkMonth,String(month+1));
+  assert.equal(w.document.querySelector('#kk-month-label'),null);assert.equal(w.document.title,'Kegel-Krach');
+  assert.equal(run('TH.n'),t.name);assert.equal(run('pin'),oldPin);assert.equal(run('JSON.stringify(COL)'),colors);
+  scenes.add(w.document.documentElement.style.getPropertyValue('--kk-scene'));
+  palettes.add(run('JSON.stringify([TH.fr,TH.bd,TH.cell,TH.gr])'));
+  for(const p of w.document.querySelectorAll('body>.fl')){
+    assert.equal(p.dataset.season,t.season);assert.ok(t.weather.icons.includes(p.textContent)||(t.holiday&&p.textContent===t.holiday.glyph));
+  }
+  const expected=month===11||month<2?'winter':month<5?'spring':month<8?'summer':'autumn';assert.equal(t.season,expected);
+  run("show('game')");await new Promise(r=>setTimeout(r,0));assert.ok(w.document.body.classList.contains('kk-playing'));
+  console.log('PASS: '+t.name+' has monthly scene/board and '+t.weather.name+' particles');
+  dom.window.close();
+}
+assert.equal(scenes.size,12);assert.equal(palettes.size,12);
+console.log('PASS: 12 distinct backgrounds and board palettes; all seasonal boundaries correct; original figures/player colours unchanged');
+const holidayDom=new JSDOM(html.replace(/<script>[\s\S]*?<\/script>/,''),{url:'https://example.test/spiel/',runScripts:'outside-only',pretendToBeVisual:true}),h=holidayDom.window;
+let today=[2026,11,25,12];const NativeDate=h.Date;
+h.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:today));}};
+h.requestAnimationFrame=()=>0;h.HTMLCanvasElement.prototype.getContext=()=>new Proxy({},{get:()=>()=>{}});
+runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],holidayDom.getInternalVMContext());
+runInContext(themeSource,holidayDom.getInternalVMContext());await new Promise(r=>setTimeout(r,270));
+const api=h.KKSeasonal;
+assert.equal(api.easter(2026).getMonth(),3);assert.equal(api.easter(2026).getDate(),5);
+assert.equal(api.easter(2027).getMonth(),2);assert.equal(api.easter(2027).getDate(),28);
+assert.equal(api.holidayForDate(new Date(2026,10,1)),null);assert.equal(api.holidayForDate(new Date(2026,10,2)),null);
+assert.equal(api.holidayForDate(new Date(2026,11,23)),null);
+assert.equal(api.holidayForDate(new Date(2026,11,24)).id,'christmas-eve');
+assert.equal(api.holidayForDate(new Date(2026,11,25)).id,'christmas');
+assert.equal(api.holidayForDate(new Date(2026,11,26)).id,'boxing-day');
+assert.equal(api.holidayForDate(new Date(2026,11,27)),null);
+assert.notEqual(api.holidayForDate(new Date(2026,11,25)).variant,api.holidayForDate(new Date(2027,11,25)).variant);
+assert.equal(h.document.documentElement.dataset.kkHoliday,'christmas');
+today=[2026,11,26,12];h.document.dispatchEvent(new h.Event('visibilitychange'));
+assert.equal(h.document.documentElement.dataset.kkHoliday,'boxing-day');
+today=[2026,11,27,12];h.document.dispatchEvent(new h.Event('visibilitychange'));
+assert.equal(h.document.documentElement.dataset.kkHoliday,'');assert.equal(h.document.querySelector('#kk-holiday-decoration').hidden,true);
+assert.equal(h.document.querySelector('#kk-holiday-decoration').textContent,'');
+assert.equal(h.document.querySelector('#kk-month-label'),null);
+holidayDom.window.close();
+console.log('PASS: no early-November candles; Easter dates verified, Christmas extras last only their own day, annual variants change and decorations clear after day change');

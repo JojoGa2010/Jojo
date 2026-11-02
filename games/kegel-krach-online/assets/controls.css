@@ -1,0 +1,36 @@
+#kk-home-logo{position:fixed!important;top:max(8px,env(safe-area-inset-top))!important;left:12px!important;z-index:100012!important;display:flex!important;align-items:center;gap:8px;min-height:44px;padding:6px 12px;border-radius:14px;background:#201942;color:#fff!important;text-decoration:none!important;font:800 17px system-ui!important;box-shadow:0 2px 12px #0004}
+#home h1>a,#lobby h1>a{color:#ffd60a;text-decoration:none}
+body #home.scr,body #lobby.scr{padding-top:calc(64px + env(safe-area-inset-top,0px))!important}
+@media(max-width:900px),(pointer:coarse){
+  #kk-home-logo{max-width:50vw;white-space:nowrap;font-size:clamp(14px,4.1vw,17px)!important}
+  #kk-fullscreen{max-width:42vw!important;min-height:44px!important;font-size:12px!important;line-height:1.15!important;padding:6px 9px!important;white-space:normal!important}
+  #home button,#lobby button,#kk-admin-dialog button{min-height:48px;touch-action:manipulation}
+  #home input,#home select,#lobby input{font-size:16px!important;min-height:48px}
+  #home h1,#lobby h1{font-size:clamp(28px,8vw,42px);line-height:1.15}
+  #home .mc b{font-size:22px}#home .mc canvas{height:94px}
+  #lobby .lps{gap:10px}#lobby .sl{min-width:0;min-height:156px}#lobby .sl b{overflow-wrap:anywhere}#lobby .sl button{font-size:14px;padding:8px}
+  body #game .hud{top:calc(62px + env(safe-area-inset-top,0px))!important;left:10px;right:10px;gap:8px;justify-content:stretch}
+  body #game #bMn{width:48px;min-height:48px;flex:none;padding:8px;background:#201942;color:white}
+  body #game #turn{flex:1;min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;padding:6px 10px;font-size:14px;line-height:1.3;text-align:center}
+  body #game #cv{top:calc(122px + env(safe-area-inset-top,0px))!important;bottom:auto!important;left:0!important;width:100%!important;height:calc(100% - 190px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;touch-action:none}
+  #kk-chat-toggle{display:block;position:absolute;bottom:calc(8px + env(safe-area-inset-bottom,0px));left:10px;right:10px;width:calc(100% - 20px);min-height:46px;padding:8px;background:#201942;color:white;font-size:16px;box-shadow:none;touch-action:manipulation}
+  body #game #eb{display:none;left:10px;right:10px;bottom:calc(62px + env(safe-area-inset-bottom,0px));padding:12px;border:1px solid #ffffff55;border-radius:16px;background:#201942;z-index:7;flex-wrap:wrap;overflow:visible}
+  body #game.kk-chat-open #eb{display:flex}
+  body #game #eb button{min-width:44px;min-height:44px;font-size:24px;padding:4px;flex:1}
+  body #game #eb input{flex:1 0 100%;width:100%;min-width:0;min-height:48px;font-size:16px;user-select:text}
+  #game #toast{top:calc(116px + env(safe-area-inset-top,0px));font-size:18px}
+  #game .box{min-width:0;width:min(340px,calc(100vw - 32px));padding:22px}
+  #kk-admin-dialog{overflow:auto}#kk-admin-dialog>div{max-height:90dvh;overflow:auto}
+}
+@media(max-height:540px) and (orientation:landscape) and (max-width:900px),(max-height:540px) and (orientation:landscape) and (pointer:coarse){
+  body #game #cv{top:calc(116px + env(safe-area-inset-top,0px))!important;left:0!important;width:calc(100% - 80px)!important;height:calc(100% - 126px - env(safe-area-inset-top,0px))!important}
+  #kk-chat-toggle{left:auto;right:max(10px,env(safe-area-inset-right));width:64px}
+  body #game #eb{left:auto;right:10px;width:min(360px,calc(100% - 20px));bottom:66px}
+}
+@media(prefers-reduced-motion:reduce){#home .mc,#lobby .sl{animation:none!important;transition:none!important}}
+
+#kk-home-logo img{width:30px;height:30px;flex:none}#home h1>a{display:inline-flex;align-items:center;justify-content:center;gap:10px}#home h1>a img{width:42px;height:42px}
+#kk-stopwatch{font:700 12px system-ui;font-variant-numeric:tabular-nums;background:#201942e8;color:#fff;padding:6px 8px;border-radius:9px;border:1px solid #ffffff40;white-space:nowrap;min-width:54px;text-align:center}
+#kk-chat-toggle{display:none}#kk-home-logo:focus-visible,#kk-chat-toggle:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#mini{translate:var(--kk-cv-left,0px) var(--kk-cv-top,0px)}
+@media(max-width:900px),(pointer:coarse){#kk-chat-toggle{display:block}#kk-stopwatch{font-size:11px;padding:6px;min-width:48px}#kk-home-logo{font-size:15px!important;padding:4px 8px}#kk-home-logo img{width:27px;height:27px}}
