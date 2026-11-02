@@ -1,17 +1,19 @@
 {
   "name": "kegel-krach-online",
   "private": true,
-  "version": "1.8.0",
+  "version": "1.9.0",
   "type": "module",
   "scripts": {
-    "check": "node --check assets/online.js && node --check assets/visuals.js && node --check assets/controls.js && node --check assets/themes.js && node --check assets/players.js",
+    "check": "node --check assets/online.js && node --check assets/visuals.js && node --check assets/controls.js && node --check assets/themes.js && node --check assets/players.js && node --check assets/animation.js",
     "test:server": "node tests/run-server.mjs",
     "test:client": "node tests/client.mjs",
     "test:visuals": "node tests/visuals.mjs",
     "test:themes": "node tests/themes.mjs",
-    "test:players": "node tests/players.mjs"
+    "test:players": "node tests/players.mjs",
+    "test:animation": "node tests/animation.mjs"
   },
   "devDependencies": {
+    "gifenc": "1.0.3",
     "@napi-rs/canvas": "1.1.0",
     "@php-wasm/node": "3.1.61",
     "@php-wasm/universal": "3.1.61",

@@ -85,6 +85,7 @@ function client(name) {
   w.eval(readFileSync(new URL('../assets/players.js',import.meta.url),'utf8'));
   w.eval(readFileSync(new URL('../assets/themes.js',import.meta.url),'utf8'));
   w.eval(readFileSync(new URL('../assets/visuals.js', import.meta.url), 'utf8'));
+  w.eval(readFileSync(new URL('../assets/animation.js',import.meta.url),'utf8'));
   w.eval("dice=async()=>{};ride=async()=>{};hop=async()=>{};kick=async()=>{};homeCam=async()=>{};");
   w.eval(adapter);
   w.eval(readFileSync(new URL('../assets/controls.js',import.meta.url),'utf8'));

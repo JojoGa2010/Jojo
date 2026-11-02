@@ -1,15 +1,25 @@
-# Kegel-Krach Online 1.8 für WordPress
+# Kegel-Krach Online 1.9 für WordPress
 
 ## Update installieren
 
-1. **Kegel-Krach-Online-v1.8.zip** herunterladen und nicht entpacken.
+1. **Kegel-Krach-Online-v1.9.zip** herunterladen und nicht entpacken.
 2. WordPress: **Plugins → Neues Plugin hinzufügen → Plugin hochladen**.
 3. ZIP auswählen und **Aktuelles durch hochgeladenes ersetzen** bestätigen.
 4. Falls nötig Plugin aktivieren, **WP-Rocket-Cache leeren** und die Spielseite auf allen Geräten neu laden.
 
 Den bestehenden Spielcode in Elementor stehen lassen. Laufende Partien vor dem Update beenden.
 
-## Neu in 1.8
+## Neu in 1.9: beweglicher Kopf und Körper
+
+Während einer Partie bewegen sich Kopf, Oberkörper und Unterkörper der Kegel unabhängig voneinander: Der Kopf dreht und nickt, der Oberkörper atmet/wippt, und der Unterkörper balanciert am festen Fußpunkt. Beim Springen und Schlagen ist die Bewegung etwas lebhafter. Hüte und Kopfschmuck folgen dem Kopf; die Körperteile bleiben verbunden.
+
+Die Animation verformt die bestehenden Skin-Zeichnungen und funktioniert mit allen 30 Skins auf dem ursprünglichen und dem Sechserbrett. Im Auswahlmenü bleiben die bisherigen Vorschauen erhalten. Die Bewegung ist rein lokal und kosmetisch; Positionen, Würfelergebnisse, Regeln und Online-Spielstände ändern sich dadurch nicht.
+
+Bei aktivierter Systemeinstellung **Bewegung reduzieren** wird die neue Gelenkanimation ausgeschaltet. Ein begrenzter Sprite-Cache hält den Speicherverbrauch klein. Eine kleine Vorschau-GIF zeigt mehrere Bewegungsphasen.
+
+Zusätzliche Prüfungen: unabhängige Gelenkwinkel, verankerter Fußpunkt, keine umgefalteten Flächen, Rendering aller 30 Skins, unveränderte Menü-Vorschauen und Spielstände, ruhende Figuren bei reduzierter Bewegung sowie erfolgreiche Figurtreffer in mehreren Bewegungsphasen auf beiden Brettarten. Entwickler: `npm run test:animation -- /absoluter/Pfad/Kegel-Krach.html /absoluter/Ausgabeordner`.
+
+## Weiterhin enthalten: Version 1.8
 
 Die Kerzen am 1./2. November stammten vom Allerheiligen-/Allerseelen-Extra. Diese beiden Extras sind entfernt. Auch die ursprünglichen Partikel werden beim Laden unmittelbar auf die saisonalen Elemente gesetzt, sodass keine November-Kerzen übernommen werden.
 
