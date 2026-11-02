@@ -55,8 +55,7 @@
     function canvasOffset(){game.style.setProperty('--kk-cv-left',cv.offsetLeft+'px');game.style.setProperty('--kk-cv-top',cv.offsetTop+'px');}
     const originalBegin=beginGame;
     beginGame=function(state){started=performance.now();ended=null;originalBegin(state);canvasOffset();updateClock();};
-    // Keep the original die prompt on every device, but require a figure tap
-    // even when there is only one legal move.
+    // Keep the die prompt; execute a sole legal move after a short clear pause.
     ui=function(){
       if(!G||G.win!=null)return;
       setTurn();hl=[];
@@ -66,7 +65,16 @@
         document.querySelector('#dl').textContent=G.pl[G.turn].n+', tippe auf den Würfel!';
         document.querySelector('#dbtn').hidden=false;
         resetDie();document.querySelector('#die').classList.add('ask');
-      }else{hl=legal(G,G.turn,G.d);}
+      }else{
+        hl=legal(G,G.turn,G.d);
+        if(hl.length===1){
+          const state=G,connection=R,seat=G.turn,index=hl[0],ticket=++stamp;
+          setTimeout(()=>{
+            if(ticket!==stamp||G!==state||R!==connection||busy||!G||G.win!=null||G.turn!==seat||G.phase!=='move'||!isMine(seat)||(R&&(R.closed||R.paused)))return;
+            const choices=legal(G,seat,G.d);if(choices.length===1&&choices[0]===index){stamp++;act({t:'move',i:index});}
+          },650);
+        }
+      }
     };
     const chat=document.querySelector('#eb');
     const chatToggle=document.createElement('button');chatToggle.id='kk-chat-toggle';chatToggle.className='g';chatToggle.textContent='Chat';chatToggle.type='button';chatToggle.setAttribute('aria-expanded','false');game.append(chatToggle);

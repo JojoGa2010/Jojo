@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kegel-Krach Online
  * Description: Verbindet das bestehende Kegel-Krach-HTML-Spiel mit privaten und offenen WordPress-Lobbys.
- * Version: 1.9.0
+ * Version: 2.0.0
  * Requires PHP: 7.4
  * Author: Digitalwohnen
  */
@@ -32,9 +32,9 @@ final class KK_Online {
         // Loading on all public pages also supports Elementor HTML widgets and changed slugs.
         // The client does nothing unless the original Kegel-Krach game is present.
         echo '<script data-nowprocket="" data-cfasync="false">window.KKOnlineConfig=' . wp_json_encode(array('api' => rest_url('kegel-krach/v1/'), 'home' => home_url('/'), 'game' => home_url('/spiel/'), 'assets' => plugins_url('assets/', __FILE__)), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
-        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=1.9.0">';
-        foreach (array('themes.js','players.js','visuals.js','animation.js','online.js','controls.js') as $file) {
-            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=1.9.0"></script>';
+        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=2.0.0">';
+        foreach (array('themes.js','players.js','visuals.js','animation.js','online.js','controls.js','behaviors.js') as $file) {
+            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=2.0.0"></script>';
         }
     }
     public static function routes() {
@@ -241,6 +241,14 @@ final class KK_Online {
                         $action = array('t' => $data['a']['t']);
                         if ($action['t'] === 'move') { $action['i'] = max(0, min(3, (int) ($data['a']['i'] ?? 0))); }
                         self::event($room, $type, array('uid' => $p['uid'], 'a' => $action), $p['uid']);
+                    } elseif ($type === 'bot_chat') {
+                        if (!$host || !$room['started']) { return self::fail('Nur der Admin darf Bot-Antworten verteilen.', 403); }
+                        $bot = null;
+                        foreach ($room['state']['pl'] ?? array() as $player) {
+                            if (!empty($player['bot']) && ($player['uid'] ?? '') === ($data['u'] ?? '')) { $bot = $player; break; }
+                        }
+                        if (!$bot) { return self::fail('Dieser Bot spielt nicht mit.', 403); }
+                        self::event($room, $type, array('n' => $bot['n'], 't' => mb_substr(sanitize_text_field($data['t'] ?? ''), 0, 80), 'u' => $bot['uid']), $p['uid']);
                     } elseif ($type === 'chat') {
                         if (microtime(true) - $p['chat_at'] < 1.5) { return self::fail('Nicht spammen! Bitte kurz warten.', 429); }
                         $room['members'][$index]['chat_at'] = microtime(true);

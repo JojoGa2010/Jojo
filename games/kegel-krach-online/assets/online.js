@@ -282,6 +282,10 @@
         if (message.isMe || !G || !message.data) return;
         const k = G.pl.findIndex(p => p.uid === message.data.u);
         if (k >= 0) bubble(k, String(message.data.t).slice(0, 40));
+        if (isHost && window.KKBotChat) window.KKBotChat.respond(message.data.u,message.data.t);
+      });
+      connection.on('bot_chat', message => {
+        if(!message.isMe&&message.data&&window.KKBotChat)window.KKBotChat.showReply(message.data.u,String(message.data.t).slice(0,80));
       });
       connection.on('act', message => {
         if (!isHost || connection.paused || !H || !message.data) return;

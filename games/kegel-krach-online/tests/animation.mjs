@@ -26,6 +26,11 @@ for(let t=0;t<8;t+=.13){
  assert.notEqual(pose.head,pose.upper);assert.notEqual(pose.upper,pose.lower);
 }
 console.log('PASS: head, upper and lower body move independently; foot fixed; no folded mesh');
+for(let direction=0;direction<8;direction++){
+ const x=Math.cos(direction*Math.PI/4),y=Math.sin(direction*Math.PI/4),p=rig.kickPose({x,y,amount:1}),foot=rig.deform(0,0,p);
+ assert.ok(foot[0]*x+foot[1]*y>6,'lower body kicks toward target');
+}
+console.log('PASS: lower-body kick points toward the victim in eight directions');
 const before=createCanvas(120,160),after=createCanvas(120,160);run('tnow=.6');
 basePin(before.getContext('2d'),60,130,1.6,'#ff4d6d',0,{});run('pin')(after.getContext('2d'),60,130,1.6,'#ff4d6d',0,{});
 assert.ok(before.toBuffer('image/png').equals(after.toBuffer('image/png')));

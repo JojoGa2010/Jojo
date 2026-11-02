@@ -181,8 +181,9 @@
       mini.style.left=p[0]/ratio-30+'px';mini.style.top=p[1]/ratio-34+'px';document.querySelector('#ml').textContent=name;mini.hidden=false;
       await rollCube(document.querySelector('#mc'),event);await T(900);mini.hidden=true;
     };
-    async function step(k,i,a,b){
-      const start=position(G.pl[k].s,a,i),end=position(G.pl[k].s,b,i);
+    async function step(k,i,a,b,standOff=0){
+      const start=position(G.pl[k].s,a,i),end=position(G.pl[k].s,b,i),length=Math.hypot(end[0]-start[0],end[1]-start[1])||1;
+      end[0]-=(end[0]-start[0])/length*standOff;end[1]-=(end[1]-start[1])/length*standOff;
       await tween(a<0?420:240,p=>{ov={k,i,x:start[0]+(end[0]-start[0])*p,y:start[1]+(end[1]-start[1])*p,z:Math.sin(p*Math.PI)*30,sq:1+Math.sin(p*Math.PI*2)*.1};});
     }
     play=async function(event){
@@ -190,9 +191,8 @@
       const{k,i}=event;
       if(event.t==='roll'){await dice(event,G.pl[k].n);if(event.d===6)say(pk(SIX));if(event.none)say(pk(NO));G=event.snap;setTurn();}
       else if(event.t==='move'){
-        hl=[];if(event.from<0)await step(k,i,-1,0);else for(let v=event.from;v<event.to;v++)await step(k,i,v,v+1);
-        if(event.cap){const[j,n]=event.cap,start=position(G.pl[j].s,G.pc[j][n],n),end=position(G.pl[j].s,-1,n);say(pk(KICK));
-          await tween(1100,p=>{ov2={k:j,i:n,x:start[0]+(end[0]-start[0])*p,y:start[1]+(end[1]-start[1])*p,z:Math.sin(p*Math.PI)*180,rot:p*12,face:1};});}
+        hl=[];if(event.from<0)await step(k,i,-1,0,event.cap?46:0);else for(let v=event.from;v<event.to;v++)await step(k,i,v,v+1,event.cap&&v+1===event.to?46:0);
+        if(event.cap)await kick(event);
         ov=ov2=null;G=event.snap;if(event.to>=60&&event.from<60)say(pk(HOME));
       }else if(event.t==='win'){
         G=event.snap;hl=[];const mine=isMine(k),winner=G.pl[k];

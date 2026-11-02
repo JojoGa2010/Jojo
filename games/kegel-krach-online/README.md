@@ -1,13 +1,21 @@
-# Kegel-Krach Online 1.9 für WordPress
+# Kegel-Krach Online 2.0 für WordPress
 
 ## Update installieren
 
-1. **Kegel-Krach-Online-v1.9.zip** herunterladen und nicht entpacken.
+1. **Kegel-Krach-Online-v2.0.zip** herunterladen und nicht entpacken.
 2. WordPress: **Plugins → Neues Plugin hinzufügen → Plugin hochladen**.
 3. ZIP auswählen und **Aktuelles durch hochgeladenes ersetzen** bestätigen.
 4. Falls nötig Plugin aktivieren, **WP-Rocket-Cache leeren** und die Spielseite auf allen Geräten neu laden.
 
 Den bestehenden Spielcode in Elementor stehen lassen. Laufende Partien vor dem Update beenden.
+
+## Neu in 2.0
+
+- Beim Schlagen holt der Kegel mit dem Unterkörper aus und stößt in Richtung des Gegners. Erst beim Kontakt fliegt der getroffene Kegel zurück ins Haus. Gilt auf beiden Brettarten.
+- Bots antworten auf menschliche Chatnachrichten, auch in Online-Partien. Grüße, Fragen zum Spiel und kurze Spaßnachrichten erhalten passende Antworten aus lokalen Dialogregeln; es wird kein externer KI-Dienst verwendet. Pro Nachricht antwortet ein Bot, mit kurzer Verzögerung. Nur der aktuelle Admin verteilt Bot-Antworten; der Server verhindert, dass andere Spieler Bot-Nachrichten vortäuschen.
+- Wenn genau ein legaler Zug möglich ist, zieht das Spiel nach kurzer Pause automatisch. Bei mehreren Möglichkeiten bleibt die direkte Figurenauswahl. Veraltete automatische Züge werden beim Wechsel von Phase, Partie oder Verbindung verworfen.
+
+Geprüft: Kontakt vor Wegflug, Kick in acht Richtungen, beide Brettarten, Bot-Antworten zwischen zwei Online-Clients, Berechtigungen am Server, automatische Einzelzüge und Abbruch veralteter Timer. Entwickler: `npm run test:behaviors -- /absoluter/Pfad/Kegel-Krach.html /absoluter/Ausgabeordner`.
 
 ## Neu in 1.9: beweglicher Kopf und Körper
 
@@ -31,7 +39,7 @@ Klassik, Tonne, Spitzi, Boss, Pilot, Wikinger, Pirat, Zauberer, Ninja und Astron
 
 - Zwei bis sechs Spieler mit je vier Kegeln. Für zwei bis vier bleibt das ursprüngliche Brett erhalten. Fünf/sechs verwenden sechs Startbereiche und eine gemeinsame 60-Felder-Runde im gleichen Holz-/Farbstil, mit vier Zielfeldern je Team. Lila und Orange ergänzen die ursprünglichen Teamfarben.
 - Solo sind bis zu fünf Bots möglich. In Online-Lobbys kann der Admin Bots auf insgesamt zwei bis sechs Spieler auffüllen lassen; Standard ist vier.
-- Gewürfelt wird am großen animierten Würfel, durch Antippen oder per Enter/Leertaste. Figuren werden direkt auf dem Brett angetippt, auch bei nur einem erlaubten Zug. Es gibt keine zusätzlichen Würfel-/Figurknöpfe. Zielfeld-Tipps und Wischbewegungen führen keinen Zug aus.
+- Gewürfelt wird am großen animierten Würfel, durch Antippen oder per Enter/Leertaste. Bei mehreren erlaubten Zügen werden Figuren direkt auf dem Brett angetippt. Ein einzelner erlaubter Zug wird automatisch ausgeführt. Es gibt keine zusätzlichen Würfel-/Figurknöpfe. Zielfeld-Tipps und Wischbewegungen führen keinen Zug aus.
 - Eine kleine Stoppuhr läuft ab Spielbeginn, stoppt am Partieende und beginnt bei der nächsten Partie bei 00:00. Sie zeigt die lokale verstrichene Spielzeit inklusive Wartezeiten; keine Zugzeitbegrenzung.
 - Der Handy-Chat ist einklappbar. Das eigene SVG-Logo führt zur **Start-Lobby des Spiels** (`/spiel/`), auch aus einer laufenden Partie. Eine Online-Lobby wird nach Möglichkeit vorher verlassen; Verbindungsprobleme blockieren die Navigation höchstens 1,2 Sekunden.
 

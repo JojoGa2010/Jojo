@@ -74,7 +74,7 @@ function client(name) {
   w.eval = code => runInContext(code, dom.getInternalVMContext());
   const interval = w.setInterval.bind(w), timeout = w.setTimeout.bind(w);
   w.setInterval = (f, ms) => interval(f, Math.min(ms, 10));
-  w.setTimeout = (f, ms) => timeout(f, Math.min(ms, 10));
+  w.setTimeout = (f, ms) => timeout(f, ms===650?80:Math.min(ms, 10));
   w.requestAnimationFrame = () => 0;
   w.HTMLCanvasElement.prototype.getContext = () => new Proxy({}, { get: (_, key) => key === 'measureText' ? () => ({ width: 50 }) : () => {} });
   w.fetch = fetchMock;
@@ -89,6 +89,7 @@ function client(name) {
   w.eval("dice=async()=>{};ride=async()=>{};hop=async()=>{};kick=async()=>{};homeCam=async()=>{};");
   w.eval(adapter);
   w.eval(readFileSync(new URL('../assets/controls.js',import.meta.url),'utf8'));
+  w.eval(readFileSync(new URL('../assets/behaviors.js',import.meta.url),'utf8'));
   w.document.querySelector('#nm').value = name;
   w.document.querySelector('#fill').checked = false;
   return dom;
@@ -190,6 +191,22 @@ try {
     console.log('PASS: admin kick removes guest from displayed and server lobby');
   } finally { c.window.close(); }
   {
+    const botGuest=client('Bot-Gast');
+    try{
+      await until(()=>botGuest.window.document.documentElement.dataset.kkBehaviors,'bot guest ready');
+      await botGuest.window.eval('joinCode('+JSON.stringify(A('R.code'))+')');
+      await until(()=>A('L.length')===2,'bot lobby guest');
+      a.window.document.querySelector('#fill').checked=true;a.window.document.querySelector('#kk-fill-count').value='3';
+      await a.window.document.querySelector('#bSt').onclick();
+      await until(()=>botGuest.window.eval('G && G.pl.length===3'),'bot game start');
+      botGuest.window.eval("sendChat('Hallo')");
+      await until(()=>A("bub[2] && bub[2].t.includes('Hallo')")&&botGuest.window.eval("bub[2] && bub[2].t.includes('Hallo')"),'shared bot reply');
+      assert.equal(A('bub[2].t'),botGuest.window.eval('bub[2].t'));
+      const events=rooms.get(A('R.code')).events.filter(e=>e.type==='bot_chat');assert.equal(events.length,1);
+      console.log('PASS: online bot responds once to guest greeting; host and guest see identical reply');
+    }finally{botGuest.window.close();}
+  }
+  {
     const group=Array.from({length:6},(_,i)=>client('Spieler '+(i+1)));
     try{
       await until(()=>group.every(d=>d.window.document.documentElement.dataset.kkOnline),'six adapters');
@@ -237,8 +254,8 @@ try {
       toggle.click();assert.equal(toggle.getAttribute('aria-expanded'),'false');
       console.log('PASS: mobile chat can open and close');
       solo.window.eval("G.pc[0]=[-1,-1,-1,2];G.phase='move';G.d=1;H=cl(G);ui()");
-      await sleep(50);assert.equal(solo.window.eval('G.pc[0][3]'),2);
-      console.log('PASS: a sole legal move still requires a figure tap');
+      await until(()=>solo.window.eval('G.pc[0][3]')===3,'sole move automatic');
+      console.log('PASS: a sole legal move is automatically executed');
       let clockNow=0;Object.defineProperty(solo.window.performance,'now',{value:()=>clockNow});
       solo.window.eval("beginGame(mk([{n:'Solo',uid:'L',skin:0},{n:'Ben',uid:'other',skin:1}]))");
       const clock=solo.window.document.querySelector('#kk-stopwatch');

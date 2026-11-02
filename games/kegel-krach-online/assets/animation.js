@@ -16,6 +16,7 @@
       yaw:1-Math.pow(Math.sin(time*.9+phase),2)*.055
     };
   }
+  function kickPose(kick){return{lower:0,upper:-kick.x*kick.amount*.14,head:kick.x*kick.amount*.06,nod:0,breath:1,yaw:1,kick};}
   const turn=(point,angle,pivot)=>{
     const x=point[0],y=point[1]-pivot,c=Math.cos(angle),s=Math.sin(angle);
     return[x*c-y*s,x*s+y*c+pivot];
@@ -23,7 +24,8 @@
   function deform(x,y,p){
     const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
     const headWeight=1-smooth(-37,-28,y),lowerWeight=smooth(-23,-12,y),upperWeight=1-headWeight-lowerWeight;
-    const lower=turn([x,y],p.lower,0);
+    const lower=p.kick?turn([x,y],-p.kick.x*.95*p.kick.amount,-17):turn([x,y],p.lower,0);
+    if(p.kick)lower[1]+=p.kick.y*12*p.kick.amount*(y+17)/17;
     const upperMap=point=>turn(turn([point[0],-16+(point[1]+16)*p.breath],p.upper,-16),p.lower,0);
     const upper=upperMap([x,y]);
     const head=upperMap(turn([x*p.yaw,y+p.nod],p.head,-33));
@@ -62,7 +64,7 @@
       if(!G||!document.querySelector('#game').classList.contains('on')){basePin(ctx,x,y,scale,color,skin,options);return;}
       if(reduced.matches){basePin(ctx,x,y,scale,color,skin,{...options,ph:-tnow*2.2});return;}
       const moving=(options.z||0)>3||Math.abs((options.sq||1)-1)>.025||Math.abs(options.rot||0)>.1;
-      const p=poseAt(tnow,(options.ph||0)+skin*.41,moving),texture=sprite(color,skin,options.face),sq=options.sq||1;
+      const p=options.kick?kickPose(options.kick):poseAt(tnow,(options.ph||0)+skin*.41,moving),texture=sprite(color,skin,options.face),sq=options.sq||1;
       ctx.save();ctx.translate(x,y);ctx.rotate(options.rot||0);ctx.scale(scale*(2-sq),scale*sq);
       ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
       // Matched triangle corners prevent cracks where neighbouring bones bend.
@@ -74,6 +76,6 @@
       }
       ctx.restore();
     };
-    window.KKFigureAnimation={poseAt,deform,cacheSize:()=>cache.size};
+    window.KKFigureAnimation={poseAt,kickPose,deform,cacheSize:()=>cache.size};
   }
 })();
