@@ -2,7 +2,7 @@
 (() => {
   let attempts=0;
   const ready=setInterval(()=>{
-    if(document.documentElement.dataset.kkControls!=='1'||document.documentElement.dataset.kkOnline!=='1'||!window.KKFigureAnimation){if(++attempts>600)clearInterval(ready);return;}
+    if(document.documentElement.dataset.kkControls!=='1'||document.documentElement.dataset.kkOnline!=='1'||!window.KKFigureAnimation||!window.KKBotDialogue){if(++attempts>600)clearInterval(ready);return;}
     clearInterval(ready);install();
   },240);
   function install(){
@@ -45,20 +45,8 @@
     };
 
     const normalize=text=>String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    function replyFor(text,bot,state){
-      const t=normalize(text),name=bot.n;
-      if(/\b(hallo|hi|hey|servus|moin|guten)\b/.test(t))return 'Hallo! '+name+' ist bereit fürs Kegeln!';
-      if(/wer.*dran|wessen.*zug/.test(t))return 'Jetzt ist '+state.pl[state.turn].n+' dran.';
-      if(/regel|hilfe|wie.*spiel|wie geht/.test(t))return 'Mit einer 6 kommst du raus. Dann ab ins Ziel!';
-      if(/wer bist|dein name|heisst|heißt/.test(t))return 'Ich bin '+name+'. Dein freundlicher Kegel-Bot!';
-      if(/danke|applaus|👏/.test(t))return 'Gern! Gemeinsam macht Kegeln mehr Spaß.';
-      if(/gut gemacht|super|stark|gluckwunsch|\bgg\b/.test(t))return 'Danke! Aber die nächste Runde wird spannend!';
-      if(/wie viele|wieviel|punkt|im ziel/.test(t))return 'Ich habe '+state.pc[state.pl.indexOf(bot)].filter(v=>v>=(state.pl.length>4?60:40)).length+' Kegel im Ziel. Da geht noch was!';
-      if(/sechs|wurf|wurfel|gluck|🍀/.test(t))return 'Eine 6 wäre jetzt perfekt. Drück mir die Daumen!';
-      if(/schlecht|doof|blod|armerlich|😡/.test(t))return 'Na warte, meine Kegel sind noch im Rennen!';
-      if(/haha|lustig|😂|witz/.test(t))return 'Lach nur, ich hole dich noch ein!';
-      if(/tschuss|bye|gute nacht/.test(t))return 'Bis bald! Die Kegel warten auf dich.';
-      return ['Nachricht angekommen. Ich bleibe dran!','Ich plane schon meinen nächsten Zug.','Mal sehen, welcher Kegel als Nächstes fliegt!'][String(text).length%3];
+    function replyFor(text,bot,state,uid){
+      return window.KKBotDialogue.reply(text,bot,state,uid);
     }
     const history=document.querySelector('#chat');history.setAttribute('role','log');history.setAttribute('aria-live','polite');
     function showReply(uid,message){
@@ -67,19 +55,19 @@
       const line=document.createElement('div');line.textContent=G.pl[index].n+': '+message;history.append(line);
       while(history.children.length>2)history.firstChild.remove();setTimeout(()=>line.remove(),9000);
     }
-    let round=0,pending=null,sequence=0,lastReply=0;
+    let round=0,pending=null,sequence=0,lastReply=0;const partners=new Map();
     const oldBegin=beginGame;
-    beginGame=function(state){round++;if(pending)clearTimeout(pending);pending=null;lastReply=0;history.textContent='';oldBegin(state);};
+    beginGame=function(state){round++;partners.clear();if(pending)clearTimeout(pending);pending=null;lastReply=0;history.textContent='';window.KKBotDialogue.reset();oldBegin(state);};
     function respond(uid,text){
       if(!G||G.win!=null||(R&&!isHost)||pending)return;
       const bots=G.pl.filter(p=>p.bot);if(!bots.length)return;
       const t=normalize(text),addressed=bots.find(p=>normalize(p.n).split(/[-\s]+/).some(part=>part.length>2&&!['kegel','pinn','bowling','strike','krach'].includes(part)&&t.includes(part)));
-      const bot=addressed||bots[sequence++%bots.length],party=round,connection=R;
+      const bot=addressed||bots.find(p=>p.uid===partners.get(uid))||bots[sequence++%bots.length],party=round,connection=R;partners.set(uid,bot.uid);
       const delay=Math.max(800,1800-(Date.now()-lastReply));
       pending=setTimeout(()=>{
         pending=null;if(round!==party||R!==connection||!G||G.win!=null||(R&&(!isHost||R.closed||R.paused)))return;
         const index=G.pl.findIndex(p=>p.uid===bot.uid&&p.bot);if(index<0)return;
-        const message=replyFor(text,G.pl[index],G).slice(0,80);lastReply=Date.now();showReply(bot.uid,message);
+        const message=replyFor(text,G.pl[index],G,uid).slice(0,160);lastReply=Date.now();showReply(bot.uid,message);
         if(R)R.emit('bot_chat',{u:bot.uid,t:message});
       },delay);
     }

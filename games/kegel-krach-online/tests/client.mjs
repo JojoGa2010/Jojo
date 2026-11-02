@@ -89,6 +89,7 @@ function client(name) {
   w.eval("dice=async()=>{};ride=async()=>{};hop=async()=>{};kick=async()=>{};homeCam=async()=>{};");
   w.eval(adapter);
   w.eval(readFileSync(new URL('../assets/controls.js',import.meta.url),'utf8'));
+  w.eval(readFileSync(new URL('../assets/bot-dialogue.js', import.meta.url),'utf8'));
   w.eval(readFileSync(new URL('../assets/behaviors.js',import.meta.url),'utf8'));
   w.document.querySelector('#nm').value = name;
   w.document.querySelector('#fill').checked = false;

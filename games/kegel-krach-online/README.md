@@ -1,13 +1,43 @@
-# Kegel-Krach Online 2.0 für WordPress
+# Kegel-Krach Online 2.1 für WordPress
 
 ## Update installieren
 
-1. **Kegel-Krach-Online-v2.0.zip** herunterladen und nicht entpacken.
+1. **Kegel-Krach-Online-v2.1.zip** herunterladen und nicht entpacken.
 2. WordPress: **Plugins → Neues Plugin hinzufügen → Plugin hochladen**.
 3. ZIP auswählen und **Aktuelles durch hochgeladenes ersetzen** bestätigen.
 4. Falls nötig Plugin aktivieren, **WP-Rocket-Cache leeren** und die Spielseite auf allen Geräten neu laden.
 
 Den bestehenden Spielcode in Elementor stehen lassen. Laufende Partien vor dem Update beenden.
+
+## Neu in 2.1: Farben-Krach und bessere Gespräche
+
+Nach dem Update erscheint **Farben-Krach** als zusätzlicher Eintrag im bestehenden Spielmenü. Der bisherige Kegel-Krach-Spielcode bleibt in Elementor stehen.
+
+### Farben-Krach spielen
+
+1. Auf der Spielseite **Farben-Krach** antippen und den Namen eintragen.
+2. **Gegen Bots spielen** startet eine Partie mit einem bis fünf Computer-Mitspielern. Auch dafür wird die Verbindung zur WordPress-Webseite benötigt.
+3. Für Freunde **Raum für Freunde erstellen** wählen. Den **sechsstelligen Karten-Code** teilen; Freunde öffnen dieselbe Spielseite, wählen Farben-Krach und treten mit diesem Code bei. Der vierstellige Kegel-Krach-Code gehört zum anderen Spiel.
+4. Der Gastgeber kann vor dem Start weitere Bots ergänzen, bis insgesamt sechs Spieler am Tisch sitzen.
+5. Passende Handkarten leuchten. Karte antippen oder eine Karte vom Stapel ziehen. Bei Farbwahl erscheint eine Farbauswahl. Am Handy lassen sich die Handkarten seitlich verschieben.
+6. Bei zwei Handkarten vor dem Ablegen **Letzte Karte!** aktivieren. Wer zuerst alle Karten los ist, gewinnt. Der Gastgeber kann danach eine neue Runde starten.
+7. Das Farben-Krach-Logo und **Spielauswahl** verlassen den Kartenraum und führen zum Startmenü. Eine zurückgelassene Hand übernimmt ein Bot. Beim Neuladen kann die aktuelle Sitzung im selben Browser-Tab wieder geöffnet werden.
+
+Das neue Kartenspiel verwendet ein eigenes Design und UNO-artige Grundmechaniken mit 108 Karten: passende Farbe/Zahl/Symbol, Aussetzen, Richtungswechsel, +2, Farbwahl und +4. Die vollständigen Regeln stehen im Spiel unter **So wird gespielt**. Unsere Tischregeln: neutrale Zahl als Startkarte; +4 nur ohne Karte der aktuellen Farbe und automatisch geprüft, ohne Anfechten; kein Stapeln von Ziehkarten; „Letzte Karte!“ vor der vorletzten Karte, sonst automatisch +2; eine Runde ohne Punktesammlung. Orientierung an den [UNO-Grundregeln von Mattel](https://service.mattel.com/instruction_sheets/UNO%20Basic%20IS.pdf), mit den genannten eigenen Tischregeln.
+
+Online werden alle Kartenaktionen am WordPress-Server geprüft. Andere Handkarten und der Ziehstapel bleiben dort verborgen. Veraltete oder doppelte Aktionen werden zurückgewiesen. Bots entscheiden mit ihrer eigenen Hand und öffentlichen Informationen. Verlässt ein Mensch die Partie oder fehlt länger als 90 Sekunden die Verbindung, übernimmt ein Bot; ein verbleibender Mensch wird Gastgeber. Diese Regeln betreffen das neue Kartenspiel; Kegel-Krach behält sein bisheriges Admin-Verfahren.
+
+### Kegel-Bots unterhalten sich besser
+
+Die Kegel-Bots beantworten jetzt unter anderem Fragen zum Spielstand, aktuellen Zug, Regeln und ihrer Strategie. Sie reagieren auf Befinden, Namen, Lieblingsspiele, Witze und einfache Rechnungen. Kurze Nachfragen wie „Und du?“ oder „Warum?“ beziehen sich auf den bisherigen Gesprächszusammenhang. Namen und Vorlieben bleiben nur für die laufende Runde im Speicher. Ein Bot bleibt für dein Gespräch zuständig, bis du einen anderen ansprichst.
+
+Es gibt keine Antwort „Nachricht angekommen“ mehr. Wenn der Bot einen Satz nicht versteht, fragt er gezielt nach. Das sind erweiterte lokale Dialogregeln und keine frei sprechende KI; es wird kein externer KI-Dienst angesprochen. Diese Antworten erscheinen auch bei den anderen Online-Mitspielern.
+
+### Prüfungen
+
+Kartenregeln einschließlich +4-Zulässigkeit, Ziehen/Passen, Zwei-Spieler-Richtungswechsel, Strafkarten, Gewinn, Neustart, Mischen und leerem Stapel; private Hände und Berechtigungen; vollständige Bot-Runde mit sechs Spielern; zwei getrennte Clients gegen den PHP-Spielserver; direkte Kartenbedienung, Gastgeberwechsel und stabiles Lobby-DOM; Desktop-/Handy-Vorschau; Dialogzusammenhang und Namensgedächtnis; bestehende Kegel-Krach-Client- und Serverprüfungen.
+
+Entwickler: `npm run test:cards`, `npm run test:dialogue`. Für die lokale Browser-/Zwei-Client-Prüfung aus dem Workspace-Stamm `node work/kegel-krach-online/tests/preview-cards.mjs` starten; die Vorschau-Dateien unter `work/kk-mobile-preview` müssen vorhanden sein. Dann `npm run test:cards-client -- http://127.0.0.1:8768`. PHP-WASM benötigt in eingeschränkten Umgebungen gegebenenfalls Freigabe für seine lokale Verbindung.
 
 ## Neu in 2.0
 

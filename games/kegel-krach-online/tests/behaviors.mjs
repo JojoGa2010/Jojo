@@ -11,7 +11,7 @@ const surfaces=new WeakMap();w.HTMLCanvasElement.prototype.getContext=function()
 const run=s=>runInContext(s,dom.getInternalVMContext()),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 run(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
 run('botTalk=()=>{}');w.document.documentElement.dataset.kkOnline='1';
-for(const file of['players','animation','controls','behaviors'])run(readFileSync(new URL('../assets/'+file+'.js',import.meta.url),'utf8'));
+for(const file of['players','animation','controls','bot-dialogue','behaviors'])run(readFileSync(new URL('../assets/'+file+'.js',import.meta.url),'utf8'));
 await sleep(80);assert.equal(w.document.documentElement.dataset.kkBehaviors,'1');
 run("isHost=true;G=mk([{n:'Anna',uid:'L',skin:0},{n:'Kegel-Karl',uid:'B0',skin:6,bot:1}]);G.pc[0][0]=1;G.pc[1][0]=22;G.phase='move';G.d=1;H=cl(G);show('game');globalThis.event=doMove(0,0)[0]");
 const records=[];let clock=0;

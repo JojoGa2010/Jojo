@@ -1,12 +1,14 @@
 <?php
 /**
  * Plugin Name: Kegel-Krach Online
- * Description: Verbindet das bestehende Kegel-Krach-HTML-Spiel mit privaten und offenen WordPress-Lobbys.
- * Version: 2.0.0
+ * Description: Kegel-Krach mit Online-Lobbys und Farben-Krach, dem Kartenspiel mit Bots und Freunden.
+ * Version: 2.1.0
  * Requires PHP: 7.4
  * Author: Digitalwohnen
  */
 if (!defined('ABSPATH')) { exit; }
+
+require_once __DIR__ . '/includes/cards.php';
 
 final class KK_Online {
     private static function table() { global $wpdb; return $wpdb->prefix . 'kk_online_rooms'; }
@@ -22,22 +24,26 @@ final class KK_Online {
             PRIMARY KEY  (code),
             KEY touched (touched)
         ) ENGINE=InnoDB $charset;");
+        KK_Cards::install();
         if (!wp_next_scheduled('kk_online_cleanup')) { wp_schedule_event(time(), 'hourly', 'kk_online_cleanup'); }
     }
     public static function cleanup() {
         global $wpdb;
         $wpdb->query($wpdb->prepare('DELETE FROM ' . self::table() . ' WHERE touched < %d', time() - 7200));
+        KK_Cards::cleanup();
     }
     public static function assets() {
         // Loading on all public pages also supports Elementor HTML widgets and changed slugs.
         // The client does nothing unless the original Kegel-Krach game is present.
         echo '<script data-nowprocket="" data-cfasync="false">window.KKOnlineConfig=' . wp_json_encode(array('api' => rest_url('kegel-krach/v1/'), 'home' => home_url('/'), 'game' => home_url('/spiel/'), 'assets' => plugins_url('assets/', __FILE__)), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
-        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=2.0.0">';
-        foreach (array('themes.js','players.js','visuals.js','animation.js','online.js','controls.js','behaviors.js') as $file) {
-            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=2.0.0"></script>';
+        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/controls.css', __FILE__)) . '?ver=2.1.0">';
+        echo '<link rel="stylesheet" href="' . esc_url(plugins_url('assets/cards.css', __FILE__)) . '?ver=2.1.0">';
+        foreach (array('bot-dialogue.js','cards.js','themes.js','players.js','visuals.js','animation.js','online.js','controls.js','behaviors.js') as $file) {
+            echo '<script data-nowprocket="" data-cfasync="false" src="' . esc_url(plugins_url('assets/' . $file, __FILE__)) . '?ver=2.1.0"></script>';
         }
     }
     public static function routes() {
+        KK_Cards::routes();
         register_rest_route('kegel-krach/v1', '/rooms', array(
             'methods' => 'POST', 'callback' => array(__CLASS__, 'rooms'), 'permission_callback' => '__return_true',
         ));
@@ -248,7 +254,7 @@ final class KK_Online {
                             if (!empty($player['bot']) && ($player['uid'] ?? '') === ($data['u'] ?? '')) { $bot = $player; break; }
                         }
                         if (!$bot) { return self::fail('Dieser Bot spielt nicht mit.', 403); }
-                        self::event($room, $type, array('n' => $bot['n'], 't' => mb_substr(sanitize_text_field($data['t'] ?? ''), 0, 80), 'u' => $bot['uid']), $p['uid']);
+                        self::event($room, $type, array('n' => $bot['n'], 't' => mb_substr(sanitize_text_field($data['t'] ?? ''), 0, 160), 'u' => $bot['uid']), $p['uid']);
                     } elseif ($type === 'chat') {
                         if (microtime(true) - $p['chat_at'] < 1.5) { return self::fail('Nicht spammen! Bitte kurz warten.', 429); }
                         $room['members'][$index]['chat_at'] = microtime(true);
@@ -270,3 +276,10 @@ register_deactivation_hook(__FILE__, function () { wp_clear_scheduled_hook('kk_o
 add_action('kk_online_cleanup', array('KK_Online', 'cleanup'));
 add_action('rest_api_init', array('KK_Online', 'routes'));
 add_action('wp_footer', array('KK_Online', 'assets'), 100);
+
+// Updating an installed plugin does not run its activation hook.
+add_action('plugins_loaded', function () {
+    if (function_exists('get_option') && get_option('kk_online_schema') !== '2.1') {
+        KK_Online::install(); update_option('kk_online_schema', '2.1');
+    }
+});

@@ -285,7 +285,7 @@
         if (isHost && window.KKBotChat) window.KKBotChat.respond(message.data.u,message.data.t);
       });
       connection.on('bot_chat', message => {
-        if(!message.isMe&&message.data&&window.KKBotChat)window.KKBotChat.showReply(message.data.u,String(message.data.t).slice(0,80));
+        if(!message.isMe&&message.data&&window.KKBotChat)window.KKBotChat.showReply(message.data.u,String(message.data.t).slice(0,160));
       });
       connection.on('act', message => {
         if (!isHost || connection.paused || !H || !message.data) return;

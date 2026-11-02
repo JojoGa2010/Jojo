@@ -1,0 +1,15 @@
+import assert from'node:assert/strict';import{readFileSync}from'node:fs';import{runInNewContext}from'node:vm';
+const w={};runInNewContext(readFileSync(new URL('../assets/bot-dialogue.js',import.meta.url),'utf8'),{window:w});
+const bot={n:'Karten-Karl',uid:'B0',bot:1},state={pl:[{uid:'L',n:'Jojo'},bot],pc:[[0,-1,-1,-1],[0,2,41,-1]],turn:0,phase:'roll'};
+const say=t=>w.KKBotDialogue.reply(t,bot,state,'L');
+assert.match(say('Hallo'),/Hallo Jojo/);assert.match(say('Wie geht es dir?'),/Mir geht|Bestens/);assert.match(say('Und dir?'),/Bei mir/);
+assert.match(say('Ich heiße Anna'),/Anna/);assert.match(say('Wie heiße ich?'),/Anna/);
+assert.match(say('Ich mag Fußball'),/Fußball/);assert.match(say('Und du?'),/Kegel-Krach/);assert.match(say('Was mag ich?'),/Fußball/);
+assert.match(say('Was ist 12 * 3?'),/36/);assert.match(say('Was ist 5 / 0?'),/null/);
+assert.match(say('Wie viele Kegel sind im Ziel?'),/1 Kegel im Ziel, 2/);assert.match(say('Wer ist dran?'),/Jojo/);
+assert.match(say('Wie spielt man?'),/6/);assert.match(say('Warum?'),/Startfeld/);
+assert.match(say('Erzähl einen Witz'),/Kegel|Wurfel|Würfel/);assert.match(say('Noch einen'),/Kegel|Wurfel|Würfel/);
+assert.match(say('unbekannte geheimfrage'),/unbekannte geheimfrage/);assert.doesNotMatch(say('irgendwas'),/Nachricht angekommen/);
+w.KKBotDialogue.reset();assert.match(say('Wie heiße ich?'),/Jojo/);
+const other=w.KKBotDialogue.reply('Wie heiße ich?',bot,state,'other');assert.doesNotMatch(other,/Anna/);
+console.log('PASS: contextual German dialogue, mood vs game rules, per-human memory, follow-ups, arithmetic and honest unknowns');

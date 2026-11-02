@@ -1,17 +1,20 @@
 {
   "name": "kegel-krach-online",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "scripts": {
-    "check": "node --check assets/online.js && node --check assets/visuals.js && node --check assets/controls.js && node --check assets/themes.js && node --check assets/players.js && node --check assets/animation.js && node --check assets/behaviors.js",
+    "check": "node --check assets/online.js && node --check assets/visuals.js && node --check assets/controls.js && node --check assets/themes.js && node --check assets/players.js && node --check assets/animation.js && node --check assets/behaviors.js && node --check assets/cards.js && node --check assets/bot-dialogue.js",
     "test:server": "node tests/run-server.mjs",
     "test:client": "node tests/client.mjs",
     "test:visuals": "node tests/visuals.mjs",
     "test:themes": "node tests/themes.mjs",
     "test:players": "node tests/players.mjs",
     "test:animation": "node tests/animation.mjs",
-    "test:behaviors": "node tests/behaviors.mjs"
+    "test:behaviors": "node tests/behaviors.mjs",
+    "test:cards": "node tests/run-cards.mjs",
+    "test:dialogue": "node tests/dialogue.mjs",
+    "test:cards-client": "node tests/cards-client.mjs"
   },
   "devDependencies": {
     "gifenc": "1.0.3",
